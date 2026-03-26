@@ -6,7 +6,7 @@ import { sendWhatsAppMessage } from '@/lib/whatsapp'
 
 // POST /api/calls/initiate — Start AI outbound call
 export async function POST(req: NextRequest) {
-  const supabase = createServerSupabaseClient()
+  const supabase = await createServerSupabaseClient()
   const body = await req.json()
   const { contact_id, purpose, extra_details } = body
 
