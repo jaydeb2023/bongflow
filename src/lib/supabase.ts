@@ -11,7 +11,7 @@ export async function createClient() {
 }
 
 // Server client (for Server Components & API routes)
-export function createServerSupabaseClient() {
+export async function createServerSupabaseClient() {
   const cookieStore = await cookies()
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
