@@ -1,842 +1,631 @@
-<!DOCTYPE html>
-<html lang="bn">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>BongoFlow AI — Kolkata's AI CRM</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-<style>
-  :root {
-    --green: #00e599;
-    --green-dim: #00c97e;
-    --teal: #0ff4c6;
-    --purple: #9f7aea;
-    --dark: #080d14;
-    --dark2: #0d1520;
-    --dark3: #111c2b;
-    --card: rgba(255,255,255,0.04);
-    --card-border: rgba(255,255,255,0.08);
-    --text: #f0f6ff;
-    --muted: #7a8fa6;
-    --font-display: 'Syne', sans-serif;
-    --font-body: 'Hind Siliguri', sans-serif;
-  }
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
+"use client";
 
-  body {
-    background: var(--dark);
-    color: var(--text);
-    font-family: var(--font-body);
-    overflow-x: hidden;
-    line-height: 1.6;
-  }
+import Link from "next/link";
 
-  /* ── NOISE + GRID OVERLAY ── */
-  body::before {
-    content: '';
-    position: fixed; inset: 0; z-index: 0;
-    background-image:
-      radial-gradient(ellipse 80% 60% at 20% -10%, rgba(0,229,153,0.10) 0%, transparent 60%),
-      radial-gradient(ellipse 60% 50% at 90% 30%, rgba(159,122,234,0.08) 0%, transparent 60%),
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Crect width='40' height='40' fill='none'/%3E%3Cpath d='M0 0h40v40' fill='none' stroke='rgba(255,255,255,0.025)' stroke-width='0.5'/%3E%3C/svg%3E");
-    pointer-events: none;
-  }
+export default function LandingPage() {
+  return (
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap');
 
-  /* ── NAVBAR ── */
-  nav {
-    position: sticky; top: 0; z-index: 100;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 14px 5%;
-    background: rgba(8,13,20,0.85);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--card-border);
-  }
-  .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-  .nav-logo-img {
-    height: 36px; width: 36px;
-    border-radius: 10px;
-    background: linear-gradient(135deg, #00e599 0%, #9f7aea 100%);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px; font-weight: 800; color: #080d14;
-    font-family: var(--font-display);
-    flex-shrink: 0;
-  }
-  .nav-logo span { font-family: var(--font-display); font-weight: 700; font-size: 17px; color: var(--text); }
-  .nav-logo span em { color: var(--green); font-style: normal; }
-  .nav-links { display: flex; align-items: center; gap: 24px; }
-  .nav-links a { color: var(--muted); text-decoration: none; font-size: 14px; transition: color .2s; }
-  .nav-links a:hover { color: var(--text); }
-  .btn-pill {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 9px 20px; border-radius: 100px;
-    background: var(--green); color: #080d14;
-    font-weight: 700; font-size: 13px; font-family: var(--font-display);
-    text-decoration: none; border: none; cursor: pointer;
-    transition: transform .2s, box-shadow .2s;
-    box-shadow: 0 0 20px rgba(0,229,153,0.35);
-  }
-  .btn-pill:hover { transform: translateY(-1px); box-shadow: 0 0 30px rgba(0,229,153,0.5); }
-  .btn-ghost {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 9px 20px; border-radius: 100px;
-    background: transparent; color: var(--text);
-    font-weight: 600; font-size: 13px; font-family: var(--font-display);
-    text-decoration: none; cursor: pointer;
-    border: 1px solid var(--card-border);
-    transition: border-color .2s, color .2s;
-  }
-  .btn-ghost:hover { border-color: var(--green); color: var(--green); }
+        :root {
+          --green: #00e599;
+          --green-dim: #00c97e;
+          --teal: #0ff4c6;
+          --purple: #9f7aea;
+          --dark: #080d14;
+          --dark2: #0d1520;
+          --dark3: #111c2b;
+          --card: rgba(255,255,255,0.04);
+          --card-border: rgba(255,255,255,0.08);
+          --text: #f0f6ff;
+          --muted: #7a8fa6;
+          --font-display: 'Syne', sans-serif;
+          --font-body: 'Hind Siliguri', sans-serif;
+        }
 
-  /* ── HERO ── */
-  .hero {
-    position: relative; z-index: 1;
-    padding: 90px 5% 70px;
-    text-align: center;
-    max-width: 860px; margin: 0 auto;
-  }
-  .hero-badge {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 6px 16px; border-radius: 100px;
-    background: rgba(0,229,153,0.1); border: 1px solid rgba(0,229,153,0.3);
-    font-size: 12px; font-weight: 600; color: var(--green);
-    margin-bottom: 28px; letter-spacing: 0.04em;
-    animation: fadeUp .6s ease both;
-  }
-  .hero h1 {
-    font-family: var(--font-display);
-    font-size: clamp(2.2rem, 6vw, 4rem);
-    font-weight: 800;
-    line-height: 1.12;
-    letter-spacing: -0.02em;
-    color: var(--text);
-    margin-bottom: 22px;
-    animation: fadeUp .6s .1s ease both;
-  }
-  .hero h1 .accent { color: var(--green); }
-  .hero h1 .accent2 { color: var(--purple); }
-  .hero p {
-    font-size: 16px; color: var(--muted);
-    max-width: 560px; margin: 0 auto 36px;
-    animation: fadeUp .6s .2s ease both;
-  }
-  .hero-ctas {
-    display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
-    margin-bottom: 60px;
-    animation: fadeUp .6s .3s ease both;
-  }
-  .btn-pill-lg {
-    padding: 14px 32px; font-size: 15px; border-radius: 100px;
-    background: var(--green); color: #080d14;
-    font-weight: 700; font-family: var(--font-display);
-    text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
-    box-shadow: 0 0 32px rgba(0,229,153,0.4);
-    transition: transform .2s, box-shadow .2s;
-  }
-  .btn-pill-lg:hover { transform: translateY(-2px); box-shadow: 0 0 48px rgba(0,229,153,0.55); }
-  .btn-ghost-lg {
-    padding: 14px 32px; font-size: 15px; border-radius: 100px;
-    background: transparent; color: var(--text);
-    font-weight: 600; font-family: var(--font-display);
-    text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
-    border: 1px solid var(--card-border);
-    transition: border-color .2s, color .2s;
-  }
-  .btn-ghost-lg:hover { border-color: var(--green); color: var(--green); }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
 
-  /* ── STATS BAR ── */
-  .stats-bar {
-    position: relative; z-index: 1;
-    display: flex; justify-content: center; flex-wrap: wrap; gap: 10px;
-    padding: 0 5% 80px;
-    animation: fadeUp .6s .4s ease both;
-  }
-  .stat-chip {
-    display: flex; align-items: center; gap: 8px;
-    padding: 10px 20px; border-radius: 100px;
-    background: var(--card); border: 1px solid var(--card-border);
-    font-size: 13px; color: var(--muted);
-    backdrop-filter: blur(8px);
-  }
-  .stat-chip strong { color: var(--text); font-family: var(--font-display); }
-  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); display: inline-block; }
-  .dot-p { background: var(--purple); }
-  .dot-o { background: #fbbf24; }
+        .bf-root {
+          background: var(--dark);
+          color: var(--text);
+          font-family: var(--font-body);
+          overflow-x: hidden;
+          line-height: 1.6;
+          min-height: 100vh;
+          position: relative;
+        }
 
-  /* ── DEMO SCREENSHOTS SECTION ── */
-  .demo-section {
-    position: relative; z-index: 1;
-    padding: 0 5% 100px;
-    max-width: 1100px; margin: 0 auto;
-  }
-  .section-label {
-    text-align: center; margin-bottom: 52px;
-  }
-  .section-label h2 {
-    font-family: var(--font-display);
-    font-size: clamp(1.6rem, 4vw, 2.4rem);
-    font-weight: 800; letter-spacing: -0.02em;
-    color: var(--text); margin-bottom: 12px;
-  }
-  .section-label p { color: var(--muted); font-size: 15px; }
+        .bf-root::before {
+          content: '';
+          position: fixed; inset: 0; z-index: 0;
+          background-image:
+            radial-gradient(ellipse 80% 60% at 20% -10%, rgba(0,229,153,0.10) 0%, transparent 60%),
+            radial-gradient(ellipse 60% 50% at 90% 30%, rgba(159,122,234,0.08) 0%, transparent 60%);
+          pointer-events: none;
+        }
 
-  /* Dashboard mockup card */
-  .demo-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    align-items: start;
-  }
-  @media(max-width:720px){
-    .demo-grid { grid-template-columns: 1fr; }
-    nav .nav-links a { display: none; }
-  }
+        /* NAV */
+        .bf-nav {
+          position: sticky; top: 0; z-index: 100;
+          display: flex; align-items: center; justify-content: space-between;
+          padding: 14px 5%;
+          background: rgba(8,13,20,0.85);
+          backdrop-filter: blur(20px);
+          border-bottom: 1px solid var(--card-border);
+        }
+        .bf-nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .bf-nav-logo-icon {
+          height: 36px; width: 36px; border-radius: 10px;
+          background: linear-gradient(135deg, #00e599 0%, #9f7aea 100%);
+          display: flex; align-items: center; justify-content: center;
+          font-size: 16px; font-weight: 800; color: #080d14;
+          font-family: var(--font-display); flex-shrink: 0;
+        }
+        .bf-nav-logo-text { font-family: var(--font-display); font-weight: 700; font-size: 17px; color: var(--text); }
+        .bf-nav-logo-text em { color: var(--green); font-style: normal; }
+        .bf-nav-links { display: flex; align-items: center; gap: 24px; }
+        .bf-nav-links a { color: var(--muted); text-decoration: none; font-size: 14px; transition: color .2s; }
+        .bf-nav-links a:hover { color: var(--text); }
 
-  .demo-card {
-    border-radius: 20px;
-    border: 1px solid var(--card-border);
-    overflow: hidden;
-    background: var(--dark3);
-    transition: transform .3s, box-shadow .3s;
-    position: relative;
-  }
-  .demo-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-  }
-  .demo-card-header {
-    padding: 14px 16px 0;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .traffic-dots { display: flex; gap: 5px; }
-  .traffic-dots span { width: 10px; height: 10px; border-radius: 50%; display: block; }
-  .t-r { background: #ff5f57; }
-  .t-y { background: #febc2e; }
-  .t-g { background: #28c840; }
-  .demo-card-title { font-size: 11px; color: var(--muted); font-family: var(--font-display); letter-spacing: 0.06em; text-transform: uppercase; }
+        .bf-btn-pill {
+          display: inline-flex; align-items: center; gap: 6px;
+          padding: 9px 20px; border-radius: 100px;
+          background: var(--green); color: #080d14;
+          font-weight: 700; font-size: 13px; font-family: var(--font-display);
+          text-decoration: none; border: none; cursor: pointer;
+          transition: transform .2s, box-shadow .2s;
+          box-shadow: 0 0 20px rgba(0,229,153,0.35);
+        }
+        .bf-btn-pill:hover { transform: translateY(-1px); box-shadow: 0 0 30px rgba(0,229,153,0.5); }
 
-  /* fake dashboard UI */
-  .fake-dash {
-    padding: 16px;
-    font-size: 11px;
-  }
-  .fake-dash-greeting {
-    font-family: var(--font-display); font-size: 15px; font-weight: 700;
-    color: var(--text); margin-bottom: 4px;
-  }
-  .fake-dash-sub { color: var(--muted); font-size: 10px; margin-bottom: 14px; }
-  .kpi-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 14px; }
-  .kpi-card {
-    background: rgba(255,255,255,0.05); border-radius: 10px; padding: 10px 8px;
-    border: 1px solid var(--card-border);
-  }
-  .kpi-label { color: var(--muted); font-size: 9px; margin-bottom: 4px; }
-  .kpi-value { font-family: var(--font-display); font-weight: 700; font-size: 15px; color: var(--text); }
-  .kpi-value.green { color: var(--green); }
-  .kpi-badge { font-size: 8px; color: var(--green); margin-top: 2px; }
+        .bf-btn-pill-lg {
+          padding: 14px 32px; font-size: 15px; border-radius: 100px;
+          background: var(--green); color: #080d14;
+          font-weight: 700; font-family: var(--font-display);
+          text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+          box-shadow: 0 0 32px rgba(0,229,153,0.4);
+          transition: transform .2s, box-shadow .2s;
+        }
+        .bf-btn-pill-lg:hover { transform: translateY(-2px); box-shadow: 0 0 48px rgba(0,229,153,0.55); }
 
-  .fake-leads { display: flex; flex-direction: column; gap: 6px; }
-  .fake-lead {
-    display: flex; align-items: center; gap: 8px;
-    background: rgba(255,255,255,0.03); border-radius: 8px;
-    padding: 8px 10px; border: 1px solid var(--card-border);
-  }
-  .lead-avatar {
-    width: 26px; height: 26px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 700; flex-shrink: 0;
-  }
-  .la-green { background: rgba(0,229,153,0.2); color: var(--green); }
-  .la-purple { background: rgba(159,122,234,0.2); color: var(--purple); }
-  .la-orange { background: rgba(251,191,36,0.2); color: #fbbf24; }
-  .lead-info { flex: 1; }
-  .lead-name { font-size: 10px; font-weight: 600; color: var(--text); }
-  .lead-sub { font-size: 9px; color: var(--muted); }
-  .lead-tag {
-    font-size: 8px; font-weight: 700; padding: 2px 7px; border-radius: 100px;
-  }
-  .hot-tag { background: rgba(0,229,153,0.15); color: var(--green); }
-  .warm-tag { background: rgba(251,191,36,0.15); color: #fbbf24; }
-  .lead-amount { font-size: 10px; font-weight: 700; color: var(--text); font-family: var(--font-display); }
+        .bf-btn-ghost-lg {
+          padding: 14px 32px; font-size: 15px; border-radius: 100px;
+          background: transparent; color: var(--text);
+          font-weight: 600; font-family: var(--font-display);
+          text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+          border: 1px solid var(--card-border);
+          transition: border-color .2s, color .2s;
+        }
+        .bf-btn-ghost-lg:hover { border-color: var(--green); color: var(--green); }
 
-  /* bar chart fake */
-  .fake-chart { display: flex; align-items: flex-end; gap: 5px; height: 60px; padding: 8px 0; }
-  .bar { border-radius: 4px 4px 0 0; width: 100%; transition: height .3s; }
+        /* HERO */
+        .bf-hero {
+          position: relative; z-index: 1;
+          padding: 90px 5% 70px;
+          text-align: center;
+          max-width: 860px; margin: 0 auto;
+        }
+        .bf-hero-badge {
+          display: inline-flex; align-items: center; gap: 6px;
+          padding: 6px 16px; border-radius: 100px;
+          background: rgba(0,229,153,0.1); border: 1px solid rgba(0,229,153,0.3);
+          font-size: 12px; font-weight: 600; color: var(--green);
+          margin-bottom: 28px; letter-spacing: 0.04em;
+        }
+        .bf-hero h1 {
+          font-family: var(--font-display);
+          font-size: clamp(2.2rem, 6vw, 4rem);
+          font-weight: 800; line-height: 1.12; letter-spacing: -0.02em;
+          color: var(--text); margin-bottom: 22px;
+        }
+        .bf-hero h1 .accent { color: var(--green); }
+        .bf-hero h1 .accent2 { color: var(--purple); }
+        .bf-hero p { font-size: 16px; color: var(--muted); max-width: 560px; margin: 0 auto 36px; }
+        .bf-hero-ctas { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 60px; }
 
-  /* WhatsApp inbox mockup */
-  .fake-wa {
-    padding: 14px;
-  }
-  .wa-header {
-    display: flex; align-items: center; gap: 8px;
-    padding-bottom: 10px; border-bottom: 1px solid var(--card-border);
-    margin-bottom: 10px;
-  }
-  .wa-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
-  .wa-title { font-size: 11px; font-weight: 700; font-family: var(--font-display); color: var(--text); }
-  .wa-badge { margin-left: auto; background: var(--green); color: #080d14; font-size: 9px; font-weight: 700; border-radius: 100px; padding: 1px 7px; }
+        /* STATS */
+        .bf-stats-bar {
+          position: relative; z-index: 1;
+          display: flex; justify-content: center; flex-wrap: wrap; gap: 10px;
+          padding: 0 5% 80px;
+        }
+        .bf-stat-chip {
+          display: flex; align-items: center; gap: 8px;
+          padding: 10px 20px; border-radius: 100px;
+          background: var(--card); border: 1px solid var(--card-border);
+          font-size: 13px; color: var(--muted); backdrop-filter: blur(8px);
+        }
+        .bf-stat-chip strong { color: var(--text); font-family: var(--font-display); }
+        .bf-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); display: inline-block; }
+        .bf-dot-p { background: var(--purple); }
+        .bf-dot-o { background: #fbbf24; }
 
-  .wa-msg-list { display: flex; flex-direction: column; gap: 8px; }
-  .wa-msg {
-    display: flex; gap: 8px; align-items: flex-start;
-  }
-  .wa-msg-avatar {
-    width: 28px; height: 28px; border-radius: 50%;
-    font-size: 11px; font-weight: 700;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
-  .wa-msg-body { background: rgba(255,255,255,0.05); border-radius: 0 8px 8px 8px; padding: 7px 10px; flex: 1; }
-  .wa-msg-name { font-size: 9px; font-weight: 700; color: var(--green); margin-bottom: 2px; }
-  .wa-msg-text { font-size: 10px; color: var(--muted); line-height: 1.4; }
-  .wa-ai-reply { background: rgba(0,229,153,0.08); border: 1px solid rgba(0,229,153,0.2); border-radius: 8px 8px 0 8px; padding: 7px 10px; margin-left: 36px; }
-  .wa-ai-label { font-size: 8px; color: var(--green); font-weight: 700; margin-bottom: 2px; }
-  .wa-ai-text { font-size: 10px; color: var(--text); line-height: 1.4; }
+        /* SECTION LABEL */
+        .bf-section-label { text-align: center; margin-bottom: 52px; }
+        .bf-section-label h2 {
+          font-family: var(--font-display);
+          font-size: clamp(1.6rem, 4vw, 2.4rem);
+          font-weight: 800; letter-spacing: -0.02em;
+          color: var(--text); margin-bottom: 12px;
+        }
+        .bf-section-label p { color: var(--muted); font-size: 15px; }
 
-  /* big demo card spanning full */
-  .demo-full {
-    grid-column: 1 / -1;
-    border-radius: 20px;
-    border: 1px solid rgba(0,229,153,0.2);
-    background: linear-gradient(135deg, rgba(0,229,153,0.05) 0%, var(--dark3) 60%);
-    padding: 28px;
-    display: flex; gap: 24px; align-items: center; flex-wrap: wrap;
-  }
-  .demo-full-text { flex: 1; min-width: 220px; }
-  .demo-full-text h3 { font-family: var(--font-display); font-size: 1.4rem; font-weight: 800; color: var(--text); margin-bottom: 8px; }
-  .demo-full-text p { color: var(--muted); font-size: 13px; line-height: 1.6; }
-  .demo-full-cta { margin-top: 18px; }
-  .demo-full-visual { flex: 1; min-width: 200px; }
+        /* DEMO */
+        .bf-demo-section {
+          position: relative; z-index: 1;
+          padding: 0 5% 100px;
+          max-width: 1100px; margin: 0 auto;
+        }
+        .bf-demo-grid {
+          display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start;
+        }
+        .bf-demo-card {
+          border-radius: 20px; border: 1px solid var(--card-border);
+          overflow: hidden; background: var(--dark3);
+          transition: transform .3s, box-shadow .3s;
+        }
+        .bf-demo-card:hover { transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+        .bf-demo-card-header {
+          padding: 14px 16px 0; display: flex; align-items: center; gap: 8px;
+        }
+        .bf-traffic { display: flex; gap: 5px; }
+        .bf-traffic span { width: 10px; height: 10px; border-radius: 50%; display: block; }
+        .bf-t-r { background: #ff5f57; }
+        .bf-t-y { background: #febc2e; }
+        .bf-t-g { background: #28c840; }
+        .bf-card-title { font-size: 11px; color: var(--muted); font-family: var(--font-display); letter-spacing: 0.06em; text-transform: uppercase; }
 
-  /* UPI invoice mockup */
-  .invoice-card {
-    background: var(--dark2); border-radius: 14px;
-    border: 1px solid var(--card-border);
-    padding: 16px; font-size: 11px;
-  }
-  .inv-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-  .inv-title { font-family: var(--font-display); font-weight: 700; font-size: 13px; color: var(--text); }
-  .inv-badge { background: rgba(0,229,153,0.15); color: var(--green); font-size: 9px; font-weight: 700; padding: 3px 8px; border-radius: 100px; }
-  .inv-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid var(--card-border); color: var(--muted); }
-  .inv-row strong { color: var(--text); }
-  .inv-total { display: flex; justify-content: space-between; padding: 10px 0 0; font-family: var(--font-display); font-weight: 800; font-size: 15px; }
-  .inv-total .amount { color: var(--green); }
-  .upi-btn { margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 6px; background: var(--green); color: #080d14; border-radius: 8px; padding: 9px; font-weight: 700; font-size: 12px; font-family: var(--font-display); }
+        /* Fake Dashboard */
+        .bf-fake-dash { padding: 16px; font-size: 11px; }
+        .bf-dash-greeting { font-family: var(--font-display); font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+        .bf-dash-sub { color: var(--muted); font-size: 10px; margin-bottom: 14px; }
+        .bf-kpi-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 14px; }
+        .bf-kpi-card { background: rgba(255,255,255,0.05); border-radius: 10px; padding: 10px 8px; border: 1px solid var(--card-border); }
+        .bf-kpi-label { color: var(--muted); font-size: 9px; margin-bottom: 4px; }
+        .bf-kpi-value { font-family: var(--font-display); font-weight: 700; font-size: 15px; color: var(--text); }
+        .bf-kpi-value.green { color: var(--green); }
+        .bf-kpi-badge { font-size: 8px; color: var(--green); margin-top: 2px; }
+        .bf-fake-chart { display: flex; align-items: flex-end; gap: 5px; height: 60px; padding: 8px 0; }
+        .bf-bar { border-radius: 4px 4px 0 0; width: 100%; }
+        .bf-fake-leads { display: flex; flex-direction: column; gap: 6px; }
+        .bf-fake-lead { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.03); border-radius: 8px; padding: 8px 10px; border: 1px solid var(--card-border); }
+        .bf-lead-av { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+        .bf-la-g { background: rgba(0,229,153,0.2); color: var(--green); }
+        .bf-la-p { background: rgba(159,122,234,0.2); color: var(--purple); }
+        .bf-la-o { background: rgba(251,191,36,0.2); color: #fbbf24; }
+        .bf-lead-info { flex: 1; }
+        .bf-lead-name { font-size: 10px; font-weight: 600; color: var(--text); }
+        .bf-lead-sub { font-size: 9px; color: var(--muted); }
+        .bf-lead-tag { font-size: 8px; font-weight: 700; padding: 2px 7px; border-radius: 100px; }
+        .bf-hot { background: rgba(0,229,153,0.15); color: var(--green); }
+        .bf-warm { background: rgba(251,191,36,0.15); color: #fbbf24; }
+        .bf-lead-amt { font-size: 10px; font-weight: 700; color: var(--text); font-family: var(--font-display); }
 
-  /* ── FEATURES ── */
-  .features-section {
-    position: relative; z-index: 1;
-    padding: 0 5% 100px;
-    max-width: 1100px; margin: 0 auto;
-  }
-  .features-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 16px;
-  }
-  .feature-card {
-    background: var(--card);
-    border: 1px solid var(--card-border);
-    border-radius: 18px; padding: 24px;
-    transition: border-color .25s, transform .25s, box-shadow .25s;
-    backdrop-filter: blur(8px);
-  }
-  .feature-card:hover {
-    border-color: rgba(0,229,153,0.3);
-    transform: translateY(-3px);
-    box-shadow: 0 12px 40px rgba(0,0,0,0.3);
-  }
-  .feature-icon {
-    width: 44px; height: 44px; border-radius: 12px;
-    background: rgba(0,229,153,0.12); border: 1px solid rgba(0,229,153,0.2);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 22px; margin-bottom: 16px;
-  }
-  .feature-title { font-family: var(--font-display); font-weight: 700; font-size: 15px; color: var(--text); margin-bottom: 8px; }
-  .feature-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
+        /* Fake WA */
+        .bf-fake-wa { padding: 14px; }
+        .bf-wa-header { display: flex; align-items: center; gap: 8px; padding-bottom: 10px; border-bottom: 1px solid var(--card-border); margin-bottom: 10px; }
+        .bf-wa-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
+        .bf-wa-title { font-size: 11px; font-weight: 700; font-family: var(--font-display); color: var(--text); }
+        .bf-wa-badge { margin-left: auto; background: var(--green); color: #080d14; font-size: 9px; font-weight: 700; border-radius: 100px; padding: 1px 7px; }
+        .bf-wa-msgs { display: flex; flex-direction: column; gap: 8px; }
+        .bf-wa-msg { display: flex; gap: 8px; align-items: flex-start; }
+        .bf-wa-msg-av { width: 28px; height: 28px; border-radius: 50%; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .bf-wa-body { background: rgba(255,255,255,0.05); border-radius: 0 8px 8px 8px; padding: 7px 10px; flex: 1; }
+        .bf-wa-name { font-size: 9px; font-weight: 700; color: var(--green); margin-bottom: 2px; }
+        .bf-wa-text { font-size: 10px; color: var(--muted); line-height: 1.4; }
+        .bf-wa-ai { background: rgba(0,229,153,0.08); border: 1px solid rgba(0,229,153,0.2); border-radius: 8px 8px 0 8px; padding: 7px 10px; margin-left: 36px; }
+        .bf-wa-ai-label { font-size: 8px; color: var(--green); font-weight: 700; margin-bottom: 2px; }
+        .bf-wa-ai-text { font-size: 10px; color: var(--text); line-height: 1.4; }
 
-  /* ── PRICING ── */
-  .pricing-section {
-    position: relative; z-index: 1;
-    padding: 0 5% 100px;
-    max-width: 1000px; margin: 0 auto;
-  }
-  .pricing-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 16px;
-  }
-  .plan-card {
-    background: var(--card); border: 1px solid var(--card-border);
-    border-radius: 20px; padding: 28px;
-    transition: transform .25s, box-shadow .25s;
-    position: relative;
-  }
-  .plan-card:hover { transform: translateY(-3px); box-shadow: 0 16px 50px rgba(0,0,0,0.35); }
-  .plan-card.featured {
-    background: linear-gradient(145deg, rgba(0,229,153,0.08) 0%, var(--dark3) 100%);
-    border-color: rgba(0,229,153,0.4);
-    box-shadow: 0 0 40px rgba(0,229,153,0.1);
-  }
-  .plan-popular {
-    position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
-    background: var(--green); color: #080d14;
-    font-size: 10px; font-weight: 800; padding: 4px 14px; border-radius: 100px;
-    font-family: var(--font-display); letter-spacing: 0.04em;
-    white-space: nowrap;
-  }
-  .plan-name { font-family: var(--font-display); font-size: 13px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px; }
-  .plan-price { font-family: var(--font-display); font-size: 2.4rem; font-weight: 800; color: var(--text); line-height: 1; }
-  .plan-price span { font-size: 14px; color: var(--muted); font-weight: 400; }
-  .plan-features { list-style: none; margin: 20px 0; display: flex; flex-direction: column; gap: 10px; }
-  .plan-features li { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 8px; }
-  .plan-features li::before { content: '✓'; color: var(--green); font-weight: 700; font-size: 12px; flex-shrink: 0; }
-  .plan-btn {
-    display: block; text-align: center; padding: 12px 20px; border-radius: 12px;
-    font-weight: 700; font-size: 13px; font-family: var(--font-display);
-    text-decoration: none; cursor: pointer; border: none;
-    transition: transform .2s, box-shadow .2s;
-  }
-  .plan-btn.primary { background: var(--green); color: #080d14; box-shadow: 0 0 20px rgba(0,229,153,0.3); }
-  .plan-btn.primary:hover { transform: translateY(-1px); box-shadow: 0 0 30px rgba(0,229,153,0.5); }
-  .plan-btn.secondary { background: rgba(255,255,255,0.06); color: var(--text); border: 1px solid var(--card-border); }
-  .plan-btn.secondary:hover { border-color: var(--green); color: var(--green); }
+        /* Demo full */
+        .bf-demo-full {
+          grid-column: 1 / -1; border-radius: 20px;
+          border: 1px solid rgba(0,229,153,0.2);
+          background: linear-gradient(135deg, rgba(0,229,153,0.05) 0%, var(--dark3) 60%);
+          padding: 28px; display: flex; gap: 24px; align-items: center; flex-wrap: wrap;
+        }
+        .bf-demo-full-text { flex: 1; min-width: 220px; }
+        .bf-demo-full-text h3 { font-family: var(--font-display); font-size: 1.4rem; font-weight: 800; color: var(--text); margin-bottom: 8px; }
+        .bf-demo-full-text p { color: var(--muted); font-size: 13px; line-height: 1.6; }
+        .bf-demo-full-cta { margin-top: 18px; }
+        .bf-demo-full-vis { flex: 1; min-width: 200px; }
 
-  /* ── SOCIAL PROOF ── */
-  .proof-section {
-    position: relative; z-index: 1;
-    padding: 0 5% 100px;
-    max-width: 1000px; margin: 0 auto;
-  }
-  .testimonial-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
-  .tcard {
-    background: var(--card); border: 1px solid var(--card-border);
-    border-radius: 16px; padding: 22px;
-  }
-  .tcard-quote { font-size: 13px; color: var(--muted); line-height: 1.7; margin-bottom: 16px; font-style: italic; }
-  .tcard-author { display: flex; align-items: center; gap: 10px; }
-  .tcard-av { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; }
-  .tcard-name { font-size: 12px; font-weight: 700; color: var(--text); font-family: var(--font-display); }
-  .tcard-role { font-size: 10px; color: var(--muted); }
-  .stars { color: var(--green); font-size: 12px; letter-spacing: 1px; margin-bottom: 12px; }
+        /* Invoice */
+        .bf-inv { background: var(--dark2); border-radius: 14px; border: 1px solid var(--card-border); padding: 16px; font-size: 11px; }
+        .bf-inv-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .bf-inv-title { font-family: var(--font-display); font-weight: 700; font-size: 13px; color: var(--text); }
+        .bf-inv-badge { background: rgba(0,229,153,0.15); color: var(--green); font-size: 9px; font-weight: 700; padding: 3px 8px; border-radius: 100px; }
+        .bf-inv-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid var(--card-border); color: var(--muted); }
+        .bf-inv-row strong { color: var(--text); }
+        .bf-inv-total { display: flex; justify-content: space-between; padding: 10px 0 0; font-family: var(--font-display); font-weight: 800; font-size: 15px; }
+        .bf-inv-total .amount { color: var(--green); }
+        .bf-upi-btn { margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 6px; background: var(--green); color: #080d14; border-radius: 8px; padding: 9px; font-weight: 700; font-size: 12px; font-family: var(--font-display); }
 
-  /* ── CTA BAND ── */
-  .cta-band {
-    position: relative; z-index: 1;
-    margin: 0 5% 100px;
-    border-radius: 24px;
-    background: linear-gradient(135deg, rgba(0,229,153,0.12) 0%, rgba(159,122,234,0.12) 100%);
-    border: 1px solid rgba(0,229,153,0.2);
-    padding: 56px 40px;
-    text-align: center;
-    overflow: hidden;
-  }
-  .cta-band::before {
-    content: '';
-    position: absolute; top: -60px; left: 50%; transform: translateX(-50%);
-    width: 300px; height: 300px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(0,229,153,0.15) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  .cta-band h2 { font-family: var(--font-display); font-size: clamp(1.6rem, 4vw, 2.5rem); font-weight: 800; color: var(--text); margin-bottom: 12px; position: relative; }
-  .cta-band p { color: var(--muted); font-size: 15px; margin-bottom: 32px; position: relative; }
-  .cta-band-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; position: relative; }
+        /* FEATURES */
+        .bf-features-section { position: relative; z-index: 1; padding: 0 5% 100px; max-width: 1100px; margin: 0 auto; }
+        .bf-features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+        .bf-feature-card { background: var(--card); border: 1px solid var(--card-border); border-radius: 18px; padding: 24px; transition: border-color .25s, transform .25s, box-shadow .25s; backdrop-filter: blur(8px); }
+        .bf-feature-card:hover { border-color: rgba(0,229,153,0.3); transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,0.3); }
+        .bf-feature-icon { width: 44px; height: 44px; border-radius: 12px; background: rgba(0,229,153,0.12); border: 1px solid rgba(0,229,153,0.2); display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 16px; }
+        .bf-feature-title { font-family: var(--font-display); font-weight: 700; font-size: 15px; color: var(--text); margin-bottom: 8px; }
+        .bf-feature-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
 
-  /* ── FOOTER ── */
-  footer {
-    position: relative; z-index: 1;
-    padding: 24px 5%;
-    border-top: 1px solid var(--card-border);
-    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
-    font-size: 12px; color: var(--muted);
-  }
-  footer strong { color: var(--text); }
+        /* PRICING */
+        .bf-pricing-section { position: relative; z-index: 1; padding: 0 5% 100px; max-width: 1000px; margin: 0 auto; }
+        .bf-pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; }
+        .bf-plan-card { background: var(--card); border: 1px solid var(--card-border); border-radius: 20px; padding: 28px; transition: transform .25s, box-shadow .25s; position: relative; }
+        .bf-plan-card:hover { transform: translateY(-3px); box-shadow: 0 16px 50px rgba(0,0,0,0.35); }
+        .bf-plan-card.featured { background: linear-gradient(145deg, rgba(0,229,153,0.08) 0%, var(--dark3) 100%); border-color: rgba(0,229,153,0.4); box-shadow: 0 0 40px rgba(0,229,153,0.1); }
+        .bf-plan-popular { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--green); color: #080d14; font-size: 10px; font-weight: 800; padding: 4px 14px; border-radius: 100px; font-family: var(--font-display); letter-spacing: 0.04em; white-space: nowrap; }
+        .bf-plan-name { font-family: var(--font-display); font-size: 13px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px; }
+        .bf-plan-price { font-family: var(--font-display); font-size: 2.4rem; font-weight: 800; color: var(--text); line-height: 1; }
+        .bf-plan-price span { font-size: 14px; color: var(--muted); font-weight: 400; }
+        .bf-plan-features { list-style: none; margin: 20px 0; display: flex; flex-direction: column; gap: 10px; }
+        .bf-plan-features li { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 8px; }
+        .bf-plan-features li::before { content: '✓'; color: var(--green); font-weight: 700; font-size: 12px; flex-shrink: 0; }
+        .bf-plan-btn { display: block; text-align: center; padding: 12px 20px; border-radius: 12px; font-weight: 700; font-size: 13px; font-family: var(--font-display); text-decoration: none; cursor: pointer; border: none; transition: transform .2s, box-shadow .2s; }
+        .bf-plan-btn.primary { background: var(--green); color: #080d14; box-shadow: 0 0 20px rgba(0,229,153,0.3); }
+        .bf-plan-btn.primary:hover { transform: translateY(-1px); box-shadow: 0 0 30px rgba(0,229,153,0.5); }
+        .bf-plan-btn.secondary { background: rgba(255,255,255,0.06); color: var(--text); border: 1px solid var(--card-border); }
+        .bf-plan-btn.secondary:hover { border-color: var(--green); color: var(--green); }
 
-  /* ── ANIMATIONS ── */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
-  }
-  .live-dot { animation: pulse 2s infinite; display: inline-block; }
+        /* TESTIMONIALS */
+        .bf-proof-section { position: relative; z-index: 1; padding: 0 5% 100px; max-width: 1000px; margin: 0 auto; }
+        .bf-test-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+        .bf-tcard { background: var(--card); border: 1px solid var(--card-border); border-radius: 16px; padding: 22px; }
+        .bf-tcard-quote { font-size: 13px; color: var(--muted); line-height: 1.7; margin-bottom: 16px; font-style: italic; }
+        .bf-tcard-author { display: flex; align-items: center; gap: 10px; }
+        .bf-tcard-av { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; }
+        .bf-tcard-name { font-size: 12px; font-weight: 700; color: var(--text); font-family: var(--font-display); }
+        .bf-tcard-role { font-size: 10px; color: var(--muted); }
+        .bf-stars { color: var(--green); font-size: 12px; letter-spacing: 1px; margin-bottom: 12px; }
 
-  /* mobile nav */
-  @media(max-width:500px){
-    .hero { padding: 60px 5% 50px; }
-    .cta-band { padding: 40px 20px; margin: 0 4% 80px; }
-    footer { flex-direction: column; text-align: center; }
-  }
+        /* CTA BAND */
+        .bf-cta-band {
+          position: relative; z-index: 1; margin: 0 5% 100px;
+          border-radius: 24px;
+          background: linear-gradient(135deg, rgba(0,229,153,0.12) 0%, rgba(159,122,234,0.12) 100%);
+          border: 1px solid rgba(0,229,153,0.2);
+          padding: 56px 40px; text-align: center; overflow: hidden;
+        }
+        .bf-cta-band h2 { font-family: var(--font-display); font-size: clamp(1.6rem, 4vw, 2.5rem); font-weight: 800; color: var(--text); margin-bottom: 12px; }
+        .bf-cta-band p { color: var(--muted); font-size: 15px; margin-bottom: 32px; }
+        .bf-cta-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 
-  /* scrollbar */
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: var(--dark); }
-  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
-</style>
-</head>
-<body>
+        /* FOOTER */
+        .bf-footer {
+          position: relative; z-index: 1; padding: 24px 5%;
+          border-top: 1px solid var(--card-border);
+          display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+          font-size: 12px; color: var(--muted);
+        }
+        .bf-footer strong { color: var(--text); }
+        .bf-footer a { color: var(--muted); text-decoration: none; }
+        .bf-footer a:hover { color: var(--green); }
 
-<!-- NAVBAR -->
-<nav>
-  <a href="#" class="nav-logo">
-    <div class="nav-logo-img">বা</div>
-    <span>BongFlow <em>AI</em></span>
-  </a>
-  <div class="nav-links">
-    <a href="#features">Features</a>
-    <a href="#pricing">Pricing</a>
-    <a href="#demo">Demo</a>
-    <a href="/dashboard" class="btn-pill">শুরু করুন →</a>
-  </div>
-</nav>
+        @keyframes livePulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+        .bf-live { animation: livePulse 2s infinite; }
 
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-badge">
-    <span class="live-dot dot"></span>
-    🚀 শুধু ৫ মিনিটেই কাজ শুরু! · Kolkata's #1 AI CRM
-  </div>
-  <h1>
-    আপনার <span class="accent">business</span>‑কে<br />
-    <span class="accent2">AI‑powered</span> করুন —<br />
-    voice note থেকে UPI পর্যন্ত
-  </h1>
-  <p>
-    Bengali voice note শুনে AI নিজে থেকে reply করে, UPI payment link পাঠায়, 
-    GST invoice বানায় আর সব deal ট্র্যাক করে। WhatsApp-এ সব কিছু।
-  </p>
-  <div class="hero-ctas">
-    <a href="/demo" class="btn-pill-lg">ডেমো দেখুন →</a>
-    <a href="/dashboard" class="btn-ghost-lg">Free-তে শুরু করুন</a>
-  </div>
-</section>
+        @media(max-width:720px){
+          .bf-demo-grid { grid-template-columns: 1fr; }
+          .bf-nav-links a:not(:last-child) { display: none; }
+          .bf-demo-full { grid-column: 1; }
+        }
+        @media(max-width:500px){
+          .bf-hero { padding: 60px 5% 50px; }
+          .bf-cta-band { padding: 40px 20px; margin: 0 4% 80px; }
+          .bf-footer { flex-direction: column; text-align: center; }
+        }
+      `}</style>
 
-<!-- STATS BAR -->
-<div class="stats-bar">
-  <div class="stat-chip"><span class="dot"></span> <strong>2,400+</strong> active businesses</div>
-  <div class="stat-chip"><span class="dot dot-p"></span> <strong>4.2 hrs</strong> saved daily</div>
-  <div class="stat-chip"><span class="dot dot-o"></span> <strong>₹4.2L</strong> avg pipeline / week</div>
-  <div class="stat-chip"><span class="dot"></span> <strong>99.9%</strong> WhatsApp uptime</div>
-</div>
-
-<!-- DEMO SECTION -->
-<section class="demo-section" id="demo">
-  <div class="section-label">
-    <h2>আসল product, আসল result</h2>
-    <p>Kolkata-র ব্যবসায়ীরা যা দেখছেন, আপনিও দেখুন।</p>
-  </div>
-
-  <div class="demo-grid">
-
-    <!-- Dashboard Card -->
-    <div class="demo-card">
-      <div class="demo-card-header">
-        <div class="traffic-dots">
-          <span class="t-r"></span><span class="t-y"></span><span class="t-g"></span>
-        </div>
-        <span class="demo-card-title">Dashboard · Live</span>
-      </div>
-      <div class="fake-dash">
-        <div class="fake-dash-greeting">সুপ্রভাত, Raju da! 👋</div>
-        <div class="fake-dash-sub">Today — 12 new leads · ₹4.2L pipeline · 23 auto-replies sent</div>
-        <div class="kpi-grid">
-          <div class="kpi-card">
-            <div class="kpi-label">Leads Today</div>
-            <div class="kpi-value">24</div>
-            <div class="kpi-badge">↑ 8 from yesterday</div>
+      <main className="bf-root">
+        {/* NAVBAR */}
+        <nav className="bf-nav">
+          <Link href="/" className="bf-nav-logo">
+            <div className="bf-nav-logo-icon">বা</div>
+            <span className="bf-nav-logo-text">BongFlow <em>AI</em></span>
+          </Link>
+          <div className="bf-nav-links">
+            <Link href="#features">Features</Link>
+            <Link href="#pricing">Pricing</Link>
+            <Link href="#demo">Demo</Link>
+            <Link href="/dashboard" className="bf-btn-pill">শুরু করুন →</Link>
           </div>
-          <div class="kpi-card">
-            <div class="kpi-label">Hot Leads 🔥</div>
-            <div class="kpi-value green">7</div>
-            <div class="kpi-badge">≥80% score</div>
+        </nav>
+
+        {/* HERO */}
+        <section className="bf-hero">
+          <div className="bf-hero-badge">
+            <span className="bf-dot bf-live" style={{display:'inline-block',marginRight:4}}></span>
+            🚀 শুধু ৫ মিনিটেই কাজ শুরু! · Kolkata&apos;s #1 AI CRM
           </div>
-          <div class="kpi-card">
-            <div class="kpi-label">Pipeline ₹</div>
-            <div class="kpi-value">4.2L</div>
-            <div class="kpi-badge">This week</div>
+          <h1>
+            আপনার <span className="accent">business</span>‑কে<br />
+            <span className="accent2">AI‑powered</span> করুন —<br />
+            voice note থেকে UPI পর্যন্ত
+          </h1>
+          <p>
+            Bengali voice note শুনে AI নিজে থেকে reply করে, UPI payment link পাঠায়,
+            GST invoice বানায় আর সব deal ট্র্যাক করে। WhatsApp-এ সব কিছু।
+          </p>
+          <div className="bf-hero-ctas">
+            <Link href="/demo" className="bf-btn-pill-lg">ডেমো দেখুন →</Link>
+            <Link href="/dashboard" className="bf-btn-ghost-lg">Free-তে শুরু করুন</Link>
           </div>
-        </div>
-        <!-- mini bar chart -->
-        <div class="fake-chart">
-          <div class="bar" style="height:40%;background:rgba(0,229,153,0.5)"></div>
-          <div class="bar" style="height:60%;background:rgba(0,229,153,0.5)"></div>
-          <div class="bar" style="height:50%;background:rgba(0,229,153,0.5)"></div>
-          <div class="bar" style="height:75%;background:rgba(0,229,153,0.7)"></div>
-          <div class="bar" style="height:55%;background:rgba(0,229,153,0.5)"></div>
-          <div class="bar" style="height:90%;background:var(--green)"></div>
-          <div class="bar" style="height:80%;background:rgba(0,229,153,0.7)"></div>
-        </div>
-        <div class="fake-leads">
-          <div class="fake-lead">
-            <div class="lead-avatar la-green">SK</div>
-            <div class="lead-info">
-              <div class="lead-name">Suresh Kumar</div>
-              <div class="lead-sub">Hardware, Behala · 🎤 Voice: দাম কত?</div>
+        </section>
+
+        {/* STATS BAR */}
+        <div className="bf-stats-bar">
+          {[
+            { dot: 'bf-dot', text: <><strong>2,400+</strong> active businesses</> },
+            { dot: 'bf-dot bf-dot-p', text: <><strong>4.2 hrs</strong> saved daily</> },
+            { dot: 'bf-dot bf-dot-o', text: <><strong>₹4.2L</strong> avg pipeline / week</> },
+            { dot: 'bf-dot', text: <><strong>99.9%</strong> WhatsApp uptime</> },
+          ].map((s, i) => (
+            <div key={i} className="bf-stat-chip">
+              <span className={s.dot}></span> {s.text}
             </div>
-            <span class="lead-tag hot-tag">HOT</span>
-            <span class="lead-amount">₹19K</span>
-          </div>
-          <div class="fake-lead">
-            <div class="lead-avatar la-purple">AB</div>
-            <div class="lead-info">
-              <div class="lead-name">Ananya Banerjee</div>
-              <div class="lead-sub">Real estate, Newtown</div>
-            </div>
-            <span class="lead-tag hot-tag">HOT</span>
-            <span class="lead-amount">₹85K</span>
-          </div>
-          <div class="fake-lead">
-            <div class="lead-avatar la-orange">RD</div>
-            <div class="lead-info">
-              <div class="lead-name">Rahul Das</div>
-              <div class="lead-sub">Wholesale, Park Street</div>
-            </div>
-            <span class="lead-tag warm-tag">WARM</span>
-            <span class="lead-amount">₹32K</span>
-          </div>
+          ))}
         </div>
-      </div>
-    </div>
 
-    <!-- WhatsApp Inbox Card -->
-    <div class="demo-card">
-      <div class="demo-card-header">
-        <div class="traffic-dots">
-          <span class="t-r"></span><span class="t-y"></span><span class="t-g"></span>
-        </div>
-        <span class="demo-card-title">WhatsApp Inbox · AI</span>
-      </div>
-      <div class="fake-wa">
-        <div class="wa-header">
-          <span class="wa-dot live-dot"></span>
-          <span class="wa-title">WhatsApp Inbox</span>
-          <span class="wa-badge">7 new</span>
-        </div>
-        <div class="wa-msg-list">
-          <div class="wa-msg">
-            <div class="wa-msg-avatar la-green lead-avatar">SK</div>
-            <div class="wa-msg-body">
-              <div class="wa-msg-name">Suresh Kumar</div>
-              <div class="wa-msg-text">🎤 "ভাই, আপনাদের hardware-এর দাম কত? আজকেই লাগবে..."</div>
+        {/* DEMO SECTION */}
+        <section className="bf-demo-section" id="demo">
+          <div className="bf-section-label">
+            <h2>আসল product, আসল result</h2>
+            <p>Kolkata-র ব্যবসায়ীরা যা দেখছেন, আপনিও দেখুন।</p>
+          </div>
+
+          <div className="bf-demo-grid">
+            {/* Dashboard Card */}
+            <div className="bf-demo-card">
+              <div className="bf-demo-card-header">
+                <div className="bf-traffic">
+                  <span className="bf-t-r"></span>
+                  <span className="bf-t-y"></span>
+                  <span className="bf-t-g"></span>
+                </div>
+                <span className="bf-card-title">Dashboard · Live</span>
+              </div>
+              <div className="bf-fake-dash">
+                <div className="bf-dash-greeting">সুপ্রভাত, Raju da! 👋</div>
+                <div className="bf-dash-sub">Today — 12 new leads · ₹4.2L pipeline · 23 auto-replies sent</div>
+                <div className="bf-kpi-grid">
+                  <div className="bf-kpi-card">
+                    <div className="bf-kpi-label">Leads Today</div>
+                    <div className="bf-kpi-value">24</div>
+                    <div className="bf-kpi-badge">↑ 8 from yesterday</div>
+                  </div>
+                  <div className="bf-kpi-card">
+                    <div className="bf-kpi-label">Hot Leads 🔥</div>
+                    <div className="bf-kpi-value green">7</div>
+                    <div className="bf-kpi-badge">≥80% score</div>
+                  </div>
+                  <div className="bf-kpi-card">
+                    <div className="bf-kpi-label">Pipeline ₹</div>
+                    <div className="bf-kpi-value">4.2L</div>
+                    <div className="bf-kpi-badge">This week</div>
+                  </div>
+                </div>
+                <div className="bf-fake-chart">
+                  {[40,60,50,75,55,90,80].map((h, i) => (
+                    <div key={i} className="bf-bar" style={{
+                      height: `${h}%`,
+                      background: h === 90 ? 'var(--green)' : `rgba(0,229,153,${h > 70 ? 0.7 : 0.5})`
+                    }}></div>
+                  ))}
+                </div>
+                <div className="bf-fake-leads">
+                  {[
+                    { av: 'SK', cls: 'bf-la-g', name: 'Suresh Kumar', sub: 'Hardware, Behala · 🎤 দাম কত?', tag: 'HOT', tagCls: 'bf-hot', amt: '₹19K' },
+                    { av: 'AB', cls: 'bf-la-p', name: 'Ananya Banerjee', sub: 'Real estate, Newtown', tag: 'HOT', tagCls: 'bf-hot', amt: '₹85K' },
+                    { av: 'RD', cls: 'bf-la-o', name: 'Rahul Das', sub: 'Wholesale, Park Street', tag: 'WARM', tagCls: 'bf-warm', amt: '₹32K' },
+                  ].map((l) => (
+                    <div key={l.av} className="bf-fake-lead">
+                      <div className={`bf-lead-av ${l.cls}`}>{l.av}</div>
+                      <div className="bf-lead-info">
+                        <div className="bf-lead-name">{l.name}</div>
+                        <div className="bf-lead-sub">{l.sub}</div>
+                      </div>
+                      <span className={`bf-lead-tag ${l.tagCls}`}>{l.tag}</span>
+                      <span className="bf-lead-amt">{l.amt}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* WhatsApp Inbox */}
+            <div className="bf-demo-card">
+              <div className="bf-demo-card-header">
+                <div className="bf-traffic">
+                  <span className="bf-t-r"></span>
+                  <span className="bf-t-y"></span>
+                  <span className="bf-t-g"></span>
+                </div>
+                <span className="bf-card-title">WhatsApp Inbox · AI</span>
+              </div>
+              <div className="bf-fake-wa">
+                <div className="bf-wa-header">
+                  <span className="bf-wa-dot bf-live"></span>
+                  <span className="bf-wa-title">WhatsApp Inbox</span>
+                  <span className="bf-wa-badge">7 new</span>
+                </div>
+                <div className="bf-wa-msgs">
+                  <div className="bf-wa-msg">
+                    <div className="bf-wa-msg-av bf-lead-av bf-la-g">SK</div>
+                    <div className="bf-wa-body">
+                      <div className="bf-wa-name">Suresh Kumar</div>
+                      <div className="bf-wa-text">🎤 &quot;ভাই, আপনাদের hardware-এর দাম কত? আজকেই লাগবে...&quot;</div>
+                    </div>
+                  </div>
+                  <div className="bf-wa-ai">
+                    <div className="bf-wa-ai-label">🤖 AI Auto-Reply · just now</div>
+                    <div className="bf-wa-ai-text">নমস্কার Suresh দা! আপনার জন্য বিশেষ offer আছে। UPI payment link পাঠাচ্ছি...</div>
+                  </div>
+                  <div className="bf-wa-msg" style={{marginTop:8}}>
+                    <div className="bf-wa-msg-av bf-lead-av bf-la-p">AB</div>
+                    <div className="bf-wa-body">
+                      <div className="bf-wa-name">Ananya Banerjee</div>
+                      <div className="bf-wa-text">Flat booking-এর জন্য GST invoice দরকার, কখন পাব?</div>
+                    </div>
+                  </div>
+                  <div className="bf-wa-ai">
+                    <div className="bf-wa-ai-label">🤖 AI Auto-Reply · 2m ago</div>
+                    <div className="bf-wa-ai-text">Ananya di, আপনার GST invoice ready! 📄 ₹85,000 — PDF পাঠানো হচ্ছে...</div>
+                  </div>
+                  <div className="bf-wa-msg" style={{marginTop:8}}>
+                    <div className="bf-wa-msg-av bf-lead-av bf-la-o">RD</div>
+                    <div className="bf-wa-body">
+                      <div className="bf-wa-name">Rahul Das</div>
+                      <div className="bf-wa-text">UPI payment link পাঠান, এখনই pay করব।</div>
+                    </div>
+                  </div>
+                  <div className="bf-wa-ai">
+                    <div className="bf-wa-ai-label">🤖 AI Auto-Reply · 5m ago</div>
+                    <div className="bf-wa-ai-text">Rahul da, payment link: pay.bongflow.ai/rd-32k ✅ ধন্যবাদ!</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Invoice Full Card */}
+            <div className="bf-demo-full">
+              <div className="bf-demo-full-text">
+                <h3>এক click-এ GST Invoice + UPI Payment 💰</h3>
+                <p>Customer WhatsApp-এ চাইলেই AI নিজে থেকে GST invoice তৈরি করে পাঠায়। UPI payment link সাথেই যায়। Deal automatically &quot;Won&quot; হয়ে যায় CRM-এ।</p>
+                <div className="bf-demo-full-cta">
+                  <Link href="/demo" className="bf-btn-pill">Live demo দেখুন →</Link>
+                </div>
+              </div>
+              <div className="bf-demo-full-vis">
+                <div className="bf-inv">
+                  <div className="bf-inv-header">
+                    <span className="bf-inv-title">GST Invoice #1042</span>
+                    <span className="bf-inv-badge">✓ Auto-generated</span>
+                  </div>
+                  {[
+                    ['Customer', 'Ananya Banerjee'],
+                    ['GSTIN', '19ABCDE1234F1Z5'],
+                    ['Item', 'Flat Booking Advance'],
+                    ['GST (18%)', '₹12,966'],
+                  ].map(([k, v]) => (
+                    <div key={k} className="bf-inv-row"><span>{k}</span><strong>{v}</strong></div>
+                  ))}
+                  <div className="bf-inv-total"><span>Total</span><span className="amount">₹85,000</span></div>
+                  <div className="bf-upi-btn">⚡ UPI Pay Now · pay.bongflow.ai/ab-85k</div>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="wa-ai-reply">
-            <div class="wa-ai-label">🤖 AI Auto-Reply · just now</div>
-            <div class="wa-ai-text">নমস্কার Suresh দা! আপনার জন্য বিশেষ offer আছে। এখনই দেখুন 👇 UPI payment link পাঠাচ্ছি...</div>
+        </section>
+
+        {/* FEATURES */}
+        <section className="bf-features-section" id="features">
+          <div className="bf-section-label">
+            <h2>সব কিছু এক জায়গায়</h2>
+            <p>আপনার business-এর জন্য তৈরি, Kolkata-র জন্য তৈরি।</p>
           </div>
-          <div class="wa-msg" style="margin-top:8px">
-            <div class="wa-msg-avatar la-purple lead-avatar">AB</div>
-            <div class="wa-msg-body">
-              <div class="wa-msg-name">Ananya Banerjee</div>
-              <div class="wa-msg-text">Flat booking-এর জন্য GST invoice দরকার, কখন পাব?</div>
-            </div>
+          <div className="bf-features-grid">
+            {[
+              { icon: '🎤', title: 'Bengali Voice AI', desc: 'WhatsApp voice note থেকে নিজে থেকে Bengali-তে transcribe করে। Slang, dialect, কথার flow সব বোঝে।' },
+              { icon: '🔥', title: 'AI Lead Scoring', desc: 'Hot/Warm/Cold আলাদা করে, কোন customer এখনই কিনবে তা আপনাকে real-time-এ বলে দেয়।' },
+              { icon: '💰', title: 'UPI + GST Invoice', desc: 'এক click-এ payment link তৈরি, আর auto-generated GST invoice WhatsApp-এ পাঠানো।' },
+              { icon: '📞', title: 'AI Voice Calling', desc: 'Bengali AI voice-calling agent নিজে থেকে follow-up call করে, CRM-এ record করে রাখে।' },
+              { icon: '📵', title: 'Missed Call CRM', desc: 'Missed call এলে আপনার business-এর নামে auto WhatsApp reply পাঠায়, deal create করে।' },
+              { icon: '👥', title: 'Team Collaboration', desc: 'Staff-দের আলাদা inbox, permission control। একই data সবার কাছে, সব সময়।' },
+            ].map((f) => (
+              <div key={f.title} className="bf-feature-card">
+                <div className="bf-feature-icon">{f.icon}</div>
+                <div className="bf-feature-title">{f.title}</div>
+                <div className="bf-feature-desc">{f.desc}</div>
+              </div>
+            ))}
           </div>
-          <div class="wa-ai-reply">
-            <div class="wa-ai-label">🤖 AI Auto-Reply · 2m ago</div>
-            <div class="wa-ai-text">Ananya di, আপনার GST invoice ready! 📄 ₹85,000 · GSTIN: 19ABCDE1234F1Z5 — PDF পাঠানো হচ্ছে...</div>
+        </section>
+
+        {/* PRICING */}
+        <section className="bf-pricing-section" id="pricing">
+          <div className="bf-section-label">
+            <h2>Simple Pricing</h2>
+            <p>কোনো hidden charge নেই। যে plan চান বদলাতে পারবেন।</p>
           </div>
-          <div class="wa-msg" style="margin-top:8px">
-            <div class="wa-msg-avatar la-orange lead-avatar">RD</div>
-            <div class="wa-msg-body">
-              <div class="wa-msg-name">Rahul Das</div>
-              <div class="wa-msg-text">UPI payment link পাঠান, এখনই pay করব।</div>
-            </div>
+          <div className="bf-pricing-grid">
+            {[
+              { name: 'Starter', price: '₹299', features: ['100 messages/day', 'Basic lead scoring', 'WhatsApp inbox', '1 user', 'UPI links'], cta: 'শুরু করুন', href: '/dashboard', featured: false },
+              { name: 'Pro', price: '₹799', features: ['Unlimited messages', 'Bengali Voice AI', 'AI auto-reply', 'UPI + GST invoice', 'AI calling agent', '3 users'], cta: 'Pro শুরু করুন →', href: '/dashboard', featured: true },
+              { name: 'Team', price: '₹1,999', features: ['Everything in Pro', '15 users', 'Multi-branch', 'Priority support', 'Custom AI training'], cta: 'Sales-এ কথা বলুন', href: '/contact', featured: false },
+            ].map((plan) => (
+              <div key={plan.name} className={`bf-plan-card${plan.featured ? ' featured' : ''}`}>
+                {plan.featured && <div className="bf-plan-popular">Most Popular ⭐</div>}
+                <div className="bf-plan-name">{plan.name}</div>
+                <div className="bf-plan-price">{plan.price} <span>/মাস</span></div>
+                <ul className="bf-plan-features">
+                  {plan.features.map((f) => <li key={f}>{f}</li>)}
+                </ul>
+                <Link href={plan.href} className={`bf-plan-btn ${plan.featured ? 'primary' : 'secondary'}`}>
+                  {plan.cta}
+                </Link>
+              </div>
+            ))}
           </div>
-          <div class="wa-ai-reply">
-            <div class="wa-ai-label">🤖 AI Auto-Reply · 5m ago</div>
-            <div class="wa-ai-text">Rahul da, payment link: pay.bongflow.ai/rd-32k ✅ ধন্যবাদ!</div>
+          <p style={{ textAlign: 'center', color: 'var(--muted)', fontSize: 12, marginTop: 20 }}>
+            🎁 3 বন্ধুকে invite করুন → 1 মাস free! · সব plan-এ WhatsApp + UPI + GST included
+          </p>
+        </section>
+
+        {/* TESTIMONIALS */}
+        <section className="bf-proof-section">
+          <div className="bf-section-label">
+            <h2>Kolkata বলছে 💬</h2>
+            <p>Real ব্যবসায়ী, real result।</p>
+          </div>
+          <div className="bf-test-grid">
+            {[
+              { av: 'রা', cls: 'bf-la-g', quote: '"এখন আমি voice note পাঠাই, BongoFlow বাকি সব করে দেয়। ৩ মাসে revenue 40% বেড়েছে।"', name: 'Ramesh Agarwal', role: 'Hardware Business, Burrabazar' },
+              { av: 'প্র', cls: 'bf-la-p', quote: '"GST invoice আর UPI link একসাথে! আমার accountant-এর কাজ অনেক কমে গেছে। Awesome!"', name: 'Priya Sen', role: 'Boutique Owner, Lake Market' },
+              { av: 'দে', cls: 'bf-la-o', quote: '"Missed call-এ auto reply — এটাই আমার business change করে দিয়েছে। Hot lead একটাও miss হয় না।"', name: 'Debashis Roy', role: 'Real Estate Agent, Salt Lake' },
+            ].map((t) => (
+              <div key={t.name} className="bf-tcard">
+                <div className="bf-stars">★★★★★</div>
+                <div className="bf-tcard-quote">{t.quote}</div>
+                <div className="bf-tcard-author">
+                  <div className={`bf-tcard-av bf-lead-av ${t.cls}`}>{t.av}</div>
+                  <div>
+                    <div className="bf-tcard-name">{t.name}</div>
+                    <div className="bf-tcard-role">{t.role}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* CTA BAND */}
+        <div className="bf-cta-band">
+          <h2>আজই শুরু করুন — সম্পূর্ণ free 🚀</h2>
+          <p>কোনো credit card দরকার নেই। শুধু WhatsApp-এ join করুন, ৫ মিনিটে setup।</p>
+          <div className="bf-cta-btns">
+            <Link href="/demo" className="bf-btn-pill-lg">ডেমো গ্রুপে ঢুকুন →</Link>
+            <Link href="/dashboard" className="bf-btn-ghost-lg">Dashboard দেখুন</Link>
           </div>
         </div>
-      </div>
-    </div>
 
-    <!-- UPI + Invoice Full Card -->
-    <div class="demo-full">
-      <div class="demo-full-text">
-        <h3>এক click-এ GST Invoice + UPI Payment 💰</h3>
-        <p>Customer WhatsApp-এ চাইলেই AI নিজে থেকে GST invoice তৈরি করে পাঠায়। UPI payment link সাথেই যায়। আর deal automatically "Won" হয়ে যায় CRM-এ।</p>
-        <div class="demo-full-cta">
-          <a href="/demo" class="btn-pill">Live demo দেখুন →</a>
-        </div>
-      </div>
-      <div class="demo-full-visual">
-        <div class="invoice-card">
-          <div class="inv-header">
-            <span class="inv-title">GST Invoice #1042</span>
-            <span class="inv-badge">✓ Auto-generated</span>
+        {/* FOOTER */}
+        <footer className="bf-footer">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div className="bf-nav-logo-icon" style={{ width: 28, height: 28, fontSize: 14, borderRadius: 8 }}>বা</div>
+            <span>© 2026 <strong>BongoFlow AI</strong></span>
           </div>
-          <div class="inv-row"><span>Customer</span><strong>Ananya Banerjee</strong></div>
-          <div class="inv-row"><span>GSTIN</span><strong>19ABCDE1234F1Z5</strong></div>
-          <div class="inv-row"><span>Item</span><strong>Flat Booking Advance</strong></div>
-          <div class="inv-row"><span>GST (18%)</span><strong>₹12,966</strong></div>
-          <div class="inv-total"><span>Total</span><span class="amount">₹85,000</span></div>
-          <div class="upi-btn">⚡ UPI Pay Now · pay.bongflow.ai/ab-85k</div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-<!-- FEATURES -->
-<section class="features-section" id="features">
-  <div class="section-label">
-    <h2>সব কিছু এক জায়গায়</h2>
-    <p>আপনার business-এর জন্য তৈরি, Kolkata-র জন্য তৈরি।</p>
-  </div>
-  <div class="features-grid">
-    <div class="feature-card">
-      <div class="feature-icon">🎤</div>
-      <div class="feature-title">Bengali Voice AI</div>
-      <div class="feature-desc">WhatsApp voice note থেকে নিজে থেকে Bengali-তে transcribe করে। Slang, dialect, কথার flow সব বোঝে।</div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">🔥</div>
-      <div class="feature-title">AI Lead Scoring</div>
-      <div class="feature-desc">Hot/Warm/Cold আলাদা করে, কোন customer এখনই কিনবে তা আপনাকে বলে দেয় real-time-এ।</div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">💰</div>
-      <div class="feature-title">UPI + GST Invoice</div>
-      <div class="feature-desc">এক click-এ payment link তৈরি, আর auto-generated GST invoice WhatsApp-এ পাঠানো।</div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">📞</div>
-      <div class="feature-title">AI Voice Calling</div>
-      <div class="feature-desc">Bengali AI voice-calling agent নিজে থেকে follow-up call করে, CRM-এ record করে রাখে।</div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">📵</div>
-      <div class="feature-title">Missed Call CRM</div>
-      <div class="feature-desc">Missed call এলে আপনার business-এর নামে auto WhatsApp reply পাঠায়, deal create করে।</div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">👥</div>
-      <div class="feature-title">Team Collaboration</div>
-      <div class="feature-desc">Staff-দের আলাদা inbox, permission control। একই data সবার কাছে, সব সময়।</div>
-    </div>
-  </div>
-</section>
-
-<!-- PRICING -->
-<section class="pricing-section" id="pricing">
-  <div class="section-label">
-    <h2>Simple Pricing</h2>
-    <p>কোনো hidden charge নেই। যে plan চান বদলাতে পারবেন।</p>
-  </div>
-  <div class="pricing-grid">
-    <div class="plan-card">
-      <div class="plan-name">Starter</div>
-      <div class="plan-price">₹299 <span>/মাস</span></div>
-      <ul class="plan-features">
-        <li>100 messages/day</li>
-        <li>Basic lead scoring</li>
-        <li>WhatsApp inbox</li>
-        <li>1 user</li>
-        <li>UPI links</li>
-      </ul>
-      <a href="/dashboard" class="plan-btn secondary">শুরু করুন</a>
-    </div>
-    <div class="plan-card featured">
-      <div class="plan-popular">Most Popular ⭐</div>
-      <div class="plan-name">Pro</div>
-      <div class="plan-price">₹799 <span>/মাস</span></div>
-      <ul class="plan-features">
-        <li>Unlimited messages</li>
-        <li>Bengali Voice AI</li>
-        <li>AI auto-reply</li>
-        <li>UPI + GST invoice</li>
-        <li>AI calling agent</li>
-        <li>3 users</li>
-      </ul>
-      <a href="/dashboard" class="plan-btn primary">Pro শুরু করুন →</a>
-    </div>
-    <div class="plan-card">
-      <div class="plan-name">Team</div>
-      <div class="plan-price">₹1,999 <span>/মাস</span></div>
-      <ul class="plan-features">
-        <li>Everything in Pro</li>
-        <li>15 users</li>
-        <li>Multi-branch</li>
-        <li>Priority support</li>
-        <li>Custom AI training</li>
-      </ul>
-      <a href="/contact" class="plan-btn secondary">Sales-এ কথা বলুন</a>
-    </div>
-  </div>
-  <p style="text-align:center;color:var(--muted);font-size:12px;margin-top:20px;">
-    🎁 3 বন্ধুকে invite করুন → 1 মাস free! · সব plan-এ WhatsApp + UPI + GST included
-  </p>
-</section>
-
-<!-- SOCIAL PROOF -->
-<section class="proof-section">
-  <div class="section-label">
-    <h2>Kolkata বলছে 💬</h2>
-    <p>Real ব্যবসায়ী, real result।</p>
-  </div>
-  <div class="testimonial-grid">
-    <div class="tcard">
-      <div class="stars">★★★★★</div>
-      <div class="tcard-quote">"এখন আমি voice note পাঠাই, BongoFlow বাকি সব করে দেয়। ৩ মাসে revenue 40% বেড়েছে।"</div>
-      <div class="tcard-author">
-        <div class="tcard-av la-green lead-avatar">রা</div>
-        <div>
-          <div class="tcard-name">Ramesh Agarwal</div>
-          <div class="tcard-role">Hardware Business, Burrabazar</div>
-        </div>
-      </div>
-    </div>
-    <div class="tcard">
-      <div class="stars">★★★★★</div>
-      <div class="tcard-quote">"GST invoice আর UPI link একসাথে! আমার accountant-এর কাজ অনেক কমে গেছে। Awesome!"</div>
-      <div class="tcard-author">
-        <div class="tcard-av la-purple lead-avatar">প্র</div>
-        <div>
-          <div class="tcard-name">Priya Sen</div>
-          <div class="tcard-role">Boutique Owner, Lake Market</div>
-        </div>
-      </div>
-    </div>
-    <div class="tcard">
-      <div class="stars">★★★★★</div>
-      <div class="tcard-quote">"Missed call-এ auto reply — এটাই আমার business change করে দিয়েছে। Hot lead একটাও miss হয় না।"</div>
-      <div class="tcard-author">
-        <div class="tcard-av la-orange lead-avatar">দে</div>
-        <div>
-          <div class="tcard-name">Debashis Roy</div>
-          <div class="tcard-role">Real Estate Agent, Salt Lake</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- CTA BAND -->
-<div class="cta-band">
-  <h2>আজই শুরু করুন — সম্পূর্ণ free 🚀</h2>
-  <p>কোনো credit card দরকার নেই। শুধু WhatsApp-এ join করুন, ৫ মিনিটে setup।</p>
-  <div class="cta-band-btns">
-    <a href="/demo" class="btn-pill-lg">ডেমো গ্রুপে ঢুকুন →</a>
-    <a href="/dashboard" class="btn-ghost-lg">Dashboard দেখুন</a>
-  </div>
-</div>
-
-<!-- FOOTER -->
-<footer>
-  <div style="display:flex;align-items:center;gap:8px;">
-    <div class="nav-logo-img" style="width:28px;height:28px;font-size:14px;border-radius:8px;">বা</div>
-    <span>© 2026 <strong>BongoFlow AI</strong></span>
-  </div>
-  <span>Made with ❤️ in Kolkata 🐯</span>
-  <div style="display:flex;gap:16px;">
-    <a href="#" style="color:var(--muted);text-decoration:none;font-size:12px;">Privacy</a>
-    <a href="#" style="color:var(--muted);text-decoration:none;font-size:12px;">Terms</a>
-    <a href="#" style="color:var(--muted);text-decoration:none;font-size:12px;">Contact</a>
-  </div>
-</footer>
-
-</body>
-</html>
+          <span>Made with ❤️ in Kolkata 🐯</span>
+          <div style={{ display: 'flex', gap: 16 }}>
+            <Link href="#">Privacy</Link>
+            <Link href="#">Terms</Link>
+            <Link href="#">Contact</Link>
+          </div>
+        </footer>
+      </main>
+    </>
+  );
+}
