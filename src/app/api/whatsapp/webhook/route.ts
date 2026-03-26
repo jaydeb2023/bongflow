@@ -81,7 +81,7 @@ export async function POST(req: NextRequest) {
       .order('created_at', { ascending: false })
       .limit(10)
 
-    const conversationHistory = (history || []).reverse().map(m => ({
+    const conversationHistory = (history || []).reverse().map((m: any) => ({
       role: m.direction === 'inbound' ? 'user' as const : 'assistant' as const,
       content: m.voice_transcript_bengali || m.raw_text || '',
     }))
