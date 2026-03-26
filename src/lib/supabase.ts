@@ -1,4 +1,5 @@
-import { createBrowserClient, createServerClient } from '@supabase/ssr'
+// src/lib/supabase/server.ts   (or wherever this file is located)
+import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import type { SupabaseClient } from '@supabase/supabase-js'
 
@@ -10,18 +11,17 @@ export async function createServerSupabaseClient(): Promise<SupabaseClient> {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value
+        getAll() {
+          return cookieStore.getAll()
         },
-        set(name: string, value: string, options: any) {
+        setAll(cookiesToSet) {
           try {
-            cookieStore.set({ name, value, ...options })
-          } catch {}
-        },
-        remove(name: string, options: any) {
-          try {
-            cookieStore.set({ name, value: '', ...options })
-          } catch {}
+            cookiesToSet.forEach(({ name, value, options }) => {
+              cookieStore.set(name, value, options)
+            })
+          } catch {
+            // Ignore errors when cookies can't be set (e.g. in Server Components)
+          }
         },
       },
     }
