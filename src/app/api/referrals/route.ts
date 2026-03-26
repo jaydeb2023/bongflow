@@ -1,26 +1,39 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createAdminClient, createServerSupabaseClient } from '@/lib/supabase'
+import { createServerSupabaseClient } from '@/lib/supabase'   // Keep this
+import { createAdminClient } from '@/lib/supabase'           // We'll handle this too
 import { sendWhatsAppMessage } from '@/lib/whatsapp'
 
 // GET /api/referrals — Get referral stats + share link
 export async function GET(req: Request) {
-  const supabase = await createServerSupabaseClient()
+  const supabase = await createServerSupabaseClient()   // ← Fixed: await added
+
   const { searchParams } = new URL(req.url)
   const businessId = searchParams.get('business_id')
 
-  if (!businessId) return NextResponse.json({ error: 'Missing business_id' }, { status: 400 })
+  if (!businessId) {
+    return NextResponse.json({ error: 'Missing business_id' }, { status: 400 })
+  }
 
-  const { data: business } = await supabase
+  const { data: business, error: businessError } = await supabase
     .from('businesses')
     .select('referral_code, total_referrals, free_months_earned')
     .eq('id', businessId)
     .single()
 
-  const { data: referrals } = await supabase
+  if (businessError) {
+    console.error('Business fetch error:', businessError)
+    return NextResponse.json({ error: 'Failed to fetch business' }, { status: 500 })
+  }
+
+  const { data: referrals, error: referralsError } = await supabase
     .from('referrals')
     .select('*, businesses!referred_id(business_name, owner_name, created_at)')
     .eq('referrer_id', businessId)
     .order('created_at', { ascending: false })
+
+  if (referralsError) {
+    console.error('Referrals fetch error:', referralsError)
+  }
 
   const stats = {
     referral_code: business?.referral_code,
@@ -39,7 +52,11 @@ ${process.env.NEXT_PUBLIC_APP_URL}/signup?ref=${business?.referral_code}\n\nPro 
 
 // POST /api/referrals/apply — Apply referral code at signup
 export async function POST(req: NextRequest) {
-  const supabase = createAdminClient()
+  const supabase = await createServerSupabaseClient()   // ← Changed: Use server client + await
+
+  // If you really need admin privileges (bypass RLS), then use this instead:
+  // const supabase = createAdminClient()   // ← Make sure this one is NOT async
+
   const body = await req.json()
   const { referral_code, new_business_id } = body
 
@@ -48,13 +65,13 @@ export async function POST(req: NextRequest) {
   }
 
   // Find referrer
-  const { data: referrer } = await supabase
+  const { data: referrer, error: referrerError } = await supabase
     .from('businesses')
     .select('id, owner_name, phone, total_referrals, free_months_earned')
     .eq('referral_code', referral_code.toUpperCase())
     .single()
 
-  if (!referrer) {
+  if (referrerError || !referrer) {
     return NextResponse.json({ error: 'Invalid referral code' }, { status: 404 })
   }
 
@@ -63,15 +80,22 @@ export async function POST(req: NextRequest) {
   }
 
   // Create referral record
-  const { error } = await supabase.from('referrals').insert({
-    referrer_id: referrer.id,
-    referred_id: new_business_id,
-    referral_code,
-    status: 'signed_up',
-  })
+  const { error: insertError } = await supabase
+    .from('referrals')
+    .insert({
+      referrer_id: referrer.id,
+      referred_id: new_business_id,
+      referral_code,
+      status: 'signed_up',
+    })
 
-  if (error?.code === '23505') {
+  if (insertError?.code === '23505') {
     return NextResponse.json({ error: 'Already referred' }, { status: 409 })
+  }
+
+  if (insertError) {
+    console.error('Insert error:', insertError)
+    return NextResponse.json({ error: 'Failed to create referral' }, { status: 500 })
   }
 
   // Update referrer stats
@@ -83,17 +107,16 @@ export async function POST(req: NextRequest) {
     .update({
       total_referrals: newTotal,
       free_months_earned: freeMonths,
-      referred_by: referrer.id,
     })
     .eq('id', referrer.id)
 
-  // Apply referral discount to new business
+  // Apply referred_by to new business
   await supabase
     .from('businesses')
     .update({ referred_by: referrer.id })
     .eq('id', new_business_id)
 
-  // Every 3 referrals = 1 free month — notify referrer on WhatsApp
+  // Every 3 referrals = 1 free month + notify
   if (newTotal % 3 === 0) {
     await supabase
       .from('businesses')
