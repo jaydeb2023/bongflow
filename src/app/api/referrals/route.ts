@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerSupabaseClient } from '@/lib/supabase'   // Keep this
-import { createAdminClient } from '@/lib/supabase'           // We'll handle this too
+import { createServerSupabaseClient } from '@/lib/supabase'
 import { sendWhatsAppMessage } from '@/lib/whatsapp'
 
 // GET /api/referrals — Get referral stats + share link
 export async function GET(req: Request) {
-  const supabase = await createServerSupabaseClient()   // ← Fixed: await added
+  const supabase = await createServerSupabaseClient()   // ← Correct await
 
   const { searchParams } = new URL(req.url)
   const businessId = searchParams.get('business_id')
@@ -14,6 +13,7 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: 'Missing business_id' }, { status: 400 })
   }
 
+  // ✅ Correct usage
   const { data: business, error: businessError } = await supabase
     .from('businesses')
     .select('referral_code, total_referrals, free_months_earned')
@@ -25,24 +25,19 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: 'Failed to fetch business' }, { status: 500 })
   }
 
-  const { data: referrals, error: referralsError } = await supabase
+  const { data: referrals } = await supabase
     .from('referrals')
     .select('*, businesses!referred_id(business_name, owner_name, created_at)')
     .eq('referrer_id', businessId)
     .order('created_at', { ascending: false })
 
-  if (referralsError) {
-    console.error('Referrals fetch error:', referralsError)
-  }
-
   const stats = {
     referral_code: business?.referral_code,
-    referral_link: `${process.env.NEXT_PUBLIC_APP_URL}/signup?ref=${business?.referral_code}`,
+    referral_link: `${process.env.NEXT_PUBLIC_APP_URL}/signup?ref=${business?.referral_code || ''}`,
     total_referrals: business?.total_referrals || 0,
     free_months_earned: business?.free_months_earned || 0,
     referrals_to_next_reward: Math.max(0, 3 - ((business?.total_referrals || 0) % 3)),
     referral_list: referrals || [],
-    // WhatsApp share message
     share_message: `ভাই/দিদি! 🐯 BongoFlow AI use কর — WhatsApp voice note শুনে customer এর deal close করে দেয়!\n\nKolkata'r সব ছোট ব্যবসার জন্য বানানো। Bengali তে কথা বোঝে, UPI link পাঠায়, lead score করে!\n\n👇 এখানে signup কর (আমার referral কোড):
 ${process.env.NEXT_PUBLIC_APP_URL}/signup?ref=${business?.referral_code}\n\nPro plan ₹799/mo এ পাবি। Try করে দেখ!`,
   }
@@ -52,10 +47,7 @@ ${process.env.NEXT_PUBLIC_APP_URL}/signup?ref=${business?.referral_code}\n\nPro 
 
 // POST /api/referrals/apply — Apply referral code at signup
 export async function POST(req: NextRequest) {
-  const supabase = await createServerSupabaseClient()   // ← Changed: Use server client + await
-
-  // If you really need admin privileges (bypass RLS), then use this instead:
-  // const supabase = createAdminClient()   // ← Make sure this one is NOT async
+  const supabase = await createServerSupabaseClient()   // ← Also fixed here
 
   const body = await req.json()
   const { referral_code, new_business_id } = body
@@ -64,7 +56,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Missing fields' }, { status: 400 })
   }
 
-  // Find referrer
   const { data: referrer, error: referrerError } = await supabase
     .from('businesses')
     .select('id, owner_name, phone, total_referrals, free_months_earned')
@@ -79,7 +70,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Cannot refer yourself' }, { status: 400 })
   }
 
-  // Create referral record
   const { error: insertError } = await supabase
     .from('referrals')
     .insert({
@@ -94,11 +84,9 @@ export async function POST(req: NextRequest) {
   }
 
   if (insertError) {
-    console.error('Insert error:', insertError)
     return NextResponse.json({ error: 'Failed to create referral' }, { status: 500 })
   }
 
-  // Update referrer stats
   const newTotal = (referrer.total_referrals || 0) + 1
   const freeMonths = Math.floor(newTotal / 3)
 
@@ -110,20 +98,16 @@ export async function POST(req: NextRequest) {
     })
     .eq('id', referrer.id)
 
-  // Apply referred_by to new business
   await supabase
     .from('businesses')
     .update({ referred_by: referrer.id })
     .eq('id', new_business_id)
 
-  // Every 3 referrals = 1 free month + notify
   if (newTotal % 3 === 0) {
     await supabase
       .from('businesses')
       .update({
-        subscription_expires_at: new Date(
-          Date.now() + 30 * 24 * 60 * 60 * 1000
-        ).toISOString(),
+        subscription_expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
       })
       .eq('id', referrer.id)
 
@@ -133,15 +117,12 @@ export async function POST(req: NextRequest) {
         `🎉 অভিনন্দন! ${referrer.owner_name} da/di!\n\n${newTotal} জন বন্ধুকে BongoFlow AI তে আনার জন্য আপনি 1 মাস FREE পেলেন! 🥳\n\nআপনার subscription automatically extend হয়ে গেছে।\n\nআরও বন্ধুদের invite করুন — প্রতি ৩ জনে ১ মাস free!\nআপনার referral code: ${referral_code}`
       )
     }
-  } else {
-    // Regular notification
-    if (referrer.phone) {
-      const remaining = 3 - (newTotal % 3)
-      await sendWhatsAppMessage(
-        referrer.phone,
-        `✅ আপনার referral কাজ করেছে!\n\n${remaining} জন আরও invite করলে 1 মাস FREE পাবেন!\nআপনার code: ${referral_code}`
-      )
-    }
+  } else if (referrer.phone) {
+    const remaining = 3 - (newTotal % 3)
+    await sendWhatsAppMessage(
+      referrer.phone,
+      `✅ আপনার referral কাজ করেছে!\n\n${remaining} জন আরও invite করলে 1 মাস FREE পাবেন!\nআপনার code: ${referral_code}`
+    )
   }
 
   return NextResponse.json({
