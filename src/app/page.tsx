@@ -57,11 +57,8 @@ export default function LandingPage() {
         }
         .bf-nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
         .bf-nav-logo-icon {
-          height: 36px; width: 36px; border-radius: 10px;
-          background: linear-gradient(135deg, #00e599 0%, #9f7aea 100%);
-          display: flex; align-items: center; justify-content: center;
-          font-size: 16px; font-weight: 800; color: #080d14;
-          font-family: var(--font-display); flex-shrink: 0;
+          height: 36px; width: auto; flex-shrink: 0;
+          display: block; object-fit: contain;
         }
         .bf-nav-logo-text { font-family: var(--font-display); font-weight: 700; font-size: 17px; color: var(--text); }
         .bf-nav-logo-text em { color: var(--green); font-style: normal; }
@@ -324,7 +321,8 @@ export default function LandingPage() {
         {/* NAVBAR */}
         <nav className="bf-nav">
           <Link href="/" className="bf-nav-logo">
-            <div className="bf-nav-logo-icon">বা</div>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/bongflowailogo.png" alt="BongoFlow AI" className="bf-nav-logo-icon" />
             <span className="bf-nav-logo-text">BongFlow <em>AI</em></span>
           </Link>
           <div className="bf-nav-links">
@@ -615,7 +613,8 @@ export default function LandingPage() {
         {/* FOOTER */}
         <footer className="bf-footer">
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <div className="bf-nav-logo-icon" style={{ width: 28, height: 28, fontSize: 14, borderRadius: 8 }}>বা</div>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/bongflowailogo.png" alt="BongoFlow AI" style={{ height: 28, width: 'auto' }} />
             <span>© 2026 <strong>BongoFlow AI</strong></span>
           </div>
           <span>Made with ❤️ in Kolkata 🐯</span>
