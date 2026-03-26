@@ -5,16 +5,16 @@ import Link from "next/link";
 export default function LandingPage() {
   return (
     <main
-      className="min-h-screen"
+      className="min-h-screen overflow-x-hidden"
       style={{
-        background: "#f8fafc",
+        background: "linear-gradient(135deg, #f0fdfa 0%, #f9fafb 100%)",
         color: "#171717",
         fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
       }}
     >
-      {/* Navbar (mobile‑friendly) */}
+      {/* Navbar */}
       <nav
-        className="sticky top-0 z-50 flex items-center justify-between px-4 py-3 sm:px-6 bg-white border-b border-gray-200"
+        className="sticky top-0 z-50 flex items-center justify-between px-4 py-3 bg-white border-b border-gray-200"
         style={{ backdropFilter: "blur(8px)" }}
       >
         <div className="flex items-center gap-3">
@@ -58,103 +58,171 @@ export default function LandingPage() {
         </div>
       </nav>
 
-      {/* Hero (mobile‑optimized) */}
+      {/* Creative Hero Banner / Demo Poster */}
       <section
-        className="px-4 pt-16 pb-10 max-w-lg mx-auto text-center"
+        className="relative px-4 py-12 max-w-lg mx-auto text-center"
+        style={{
+          background: "linear-gradient(135deg, #ebf8f1 0%, #f9fafb 100%)",
+          border: "1px solid #e5e7eb",
+          borderRadius: "16px",
+          margin: "1.5rem 0 1.5rem",
+        }}
       >
+        {/* Subtle decorative shape in background */}
         <div
-          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold mb-4"
           style={{
-            background: "#ecfdf5",
+            position: "absolute",
+            top: -20,
+            right: -20,
+            width: 80,
+            height: 80,
+            borderRadius: "50%",
+            background: "rgba(16, 185, 129, 0.15)",
+            transform: "rotate(45deg)",
+            zIndex: 0,
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            bottom: -20,
+            left: -20,
+            width: 80,
+            height: 80,
+            borderRadius: "50%",
+            background: "rgba(16, 185, 129, 0.15)",
+            transform: "rotate(45deg)",
+            zIndex: 0,
+          }}
+        />
+
+        <div
+          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold mb-3"
+          style={{
+            background: "#d1fae5",
             color: "#065f46",
             border: "0.5px solid #065f46",
+            position: "relative",
+            zIndex: 1,
           }}
         >
-          🎉 Kolkata's first Bengali AI CRM
+          🚀 শুধু ৫ মিনিটেই কাজ শুরু!
         </div>
+
         <h1
-          className="text-3xl font-bold mb-4 leading-tight"
-          style={{ color: "#171717" }}
+          className="text-2xl font-bold leading-tight mb-4"
+          style={{ color: "#171717", position: "relative", zIndex: 1 }}
         >
-          Kolkata'r nijer AI CRM —<br />
-          Voice note শুনে deal close করে!
+          আপনার business‑কে বানানোর জন্য AI‑powered CRM —<br />
+          voice note থেকে UPI পর্যন্ত.
         </h1>
+
         <p
-          className="text-base mb-6"
-          style={{
-            color: "#525252",
-          }}
+          className="text-sm mb-6"
+          style={{ color: "#525252", position: "relative", zIndex: 1 }}
         >
-          WhatsApp voice note বুঝে Bengali তে reply করে, lead score করে, UPI
-          link পাঠায়, GST invoice বানায়। দিনে ৪-৫ ঘণ্টা বাঁচে।
+          আমাদের ডেমো‑য় ঢুকুন, দেখুন কীভাবে আপনার কথা শুনে AI নিজে থেকে WhatsApp‑এ reply করে,  
+          UPI payment link পাঠায়, GST invoice বানায় আর সব deal ট্র্যাক করে।
         </p>
+
         <div className="flex flex-col gap-3 items-center">
           <Link
-            href="/dashboard"
+            href="/demo"
             className="btn-wa"
             style={{
-              padding: "10px 24px",
-              fontSize: 14,
+              padding: "11px 22px",
+              fontSize: 15,
               borderRadius: 10,
               textDecoration: "none",
               display: "inline-block",
               fontWeight: 600,
               background: "#10b981",
               color: "white",
+              position: "relative",
+              zIndex: 1,
             }}
           >
-            এখনই শুরু করুন — Free Trial →
+            ডেমো গ্রুপে ঢুকুন →
           </Link>
           <span
             className="text-xs"
-            style={{ color: "#737373" }}
+            style={{ color: "#737373", position: "relative", zIndex: 1 }}
           >
-            Setup ৫ মিনিটে · No credit card
+            কোনো credit card নয় • শুধু WhatsApp‑এ join করুন
           </span>
+        </div>
+      </section>
+
+      {/* Tiny feature‑teaser (just 3) */}
+      <section
+        className="px-4 max-w-lg mx-auto text-center"
+      >
+        <div className="grid grid-cols-3 gap-3 mb-8">
+          {[
+            { icon: "📣", text: "Bengali voice notes" },
+            { icon: "💳", text: "UPI + GST invoices" },
+            { icon: "🤖", text: "AI auto‑replies" },
+          ].map((item) => (
+            <div
+              key={item.text}
+              className="text-xs flex flex-col items-center gap-1"
+              style={{ color: "#525252" }}
+            >
+              <span
+                style={{
+                  color: "#10b981",
+                  fontSize: 20,
+                }}
+              >
+                {item.icon}
+              </span>
+              {item.text}
+            </div>
+          ))}
         </div>
       </section>
 
       {/* Features */}
       <section
-        className="px-4 pb-12 max-w-lg mx-auto"
+        className="px-4 pb-10 max-w-lg mx-auto"
       >
         <h2
-          className="text-xl font-bold mb-4 text-center"
+          className="text-xl font-bold text-center mb-4"
           style={{ color: "#171717" }}
         >
-          এই যেমন কাজ করে
+          আপনার business‑এর জন্য তৈরি হয়েছে
         </h2>
         <div className="flex flex-col gap-4">
           {[
             {
               icon: "🎤",
               title: "Bengali Voice AI",
-              desc: "Voice note transcribe করে Bengali তে। Slang, dialect সব বোঝে।",
+              desc: "WhatsApp voice note থেকে নিজে থেকে Bengali তে transcribe করে। Slang, dialect, কথার flow সব বোঝে।",
             },
             {
               icon: "🔥",
               title: "Lead Scoring",
-              desc: "Hot/Warm/Cold আলাদা করে। কোন customer এখনই কিনবে জানায়।",
+              desc: "Hot/Warm/Cold আলাদা করে, কোন customer এখনই কিনবে তা আপনাকে বলে দেয়।",
             },
             {
               icon: "💰",
               title: "UPI + GST Invoice",
-              desc: "এক click এ payment link। Auto GST invoice WhatsApp এ।",
+              desc: "এক click‑এ payment link তৈরি, আর auto‑generated GST invoice WhatsApp‑এ পাঠানো।",
             },
             {
               icon: "📞",
               title: "AI Voice Calling",
-              desc: "Bengali AI agent automatically follow‑up call করে।",
+              desc: "Bengali AI voice‑calling agent নিজে থেকে follow‑up call করে, description‑এ রেকর্ড করে।",
             },
             {
               icon: "📵",
               title: "Missed Call CRM",
-              desc: "Missed call এলে auto WhatsApp reply পাঠায়।",
+              desc: "Missed call এলে আপনার business‑এর নামে আটো WhatsApp reply পাঠায়, আর deal create করে।",
             },
             {
               icon: "👥",
               title: "Team Collaboration",
-              desc: "Staff দের আলাদা inbox, permission control।",
+              desc: "Staff দের আলাদা inbox, permission control, একই ডাটা সবার কাছে।",
             },
           ].map((f) => (
             <div
@@ -200,7 +268,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Pricing (mobile‑friendly grid) */}
+      {/* Pricing */}
       <section
         id="pricing"
         className="px-4 pb-16 max-w-lg mx-auto"
@@ -279,7 +347,7 @@ export default function LandingPage() {
                 <div
                   className="text-xs font-bold px-2 py-1 rounded-full inline-block mb-2"
                   style={{
-                    background: "#ecfdf5",
+                    background: "#d1fae5",
                     color: "#065f46",
                   }}
                 >
@@ -297,7 +365,7 @@ export default function LandingPage() {
                 style={{ color: plan.highlight ? "#10b981" : "inherit" }}
               >
                 <span
-                  className="text-2xl font-bold"
+                  className="text-xl font-bold"
                   style={{
                     color: plan.highlight ? "#10b981" : "#171717",
                   }}
@@ -354,7 +422,7 @@ export default function LandingPage() {
         </p>
       </section>
 
-      {/* Footer */}
+      {/* Creative Footer */}
       <footer
         className="px-4 pb-6 text-center text-xs"
         style={{
@@ -364,7 +432,7 @@ export default function LandingPage() {
           background: "#ffffff",
         }}
       >
-        © 2026 BongoFlow AI · Developed by Evynta 
+        © 2026 BongoFlow AI · Made with ❤️ in Kolkata 🐯
       </footer>
     </main>
   );
