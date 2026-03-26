@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createAdminClient, createServerSupabaseClient } from "@/lib/supabase";
+import { createAdminClient } from "@/lib/supabase";
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { createUpiPaymentLink } from "@/lib/razorpay";
 import { sendUpiLinkWhatsApp, sendWhatsAppMessage } from "@/lib/whatsapp";
 
 // POST /api/upi/create — Create payment link + send via WhatsApp
 export async function POST(req: NextRequest) {
   try {
-    const supabase = await createServerSupabaseClient();
+    const supabase = createServerSupabaseClient();
     const body = await req.json();
 
     const {
@@ -42,7 +43,7 @@ export async function POST(req: NextRequest) {
       description,
       invoiceNumber: `INV-${Date.now()}`,
       gstRate: gst_rate,
-      notifyWhatsapp: false, // We'll send manually via our WA integration
+      notifyWhatsapp: false,
     });
 
     // Save to DB
@@ -61,7 +62,7 @@ export async function POST(req: NextRequest) {
         description,
         auto_followup_enabled: auto_followup,
         next_reminder_at:
-          new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24h
+          new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
       })
       .select()
       .single();
