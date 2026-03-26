@@ -2,49 +2,78 @@
 // Razorpay — UPI Links + GST Invoices
 // ============================================
 
-const Razorpay = require('razorpay')
+import type Razorpay from "razorpay";
 
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET,
-})
+// We'll create Razorpay only on demand (runtime only, not top level)
+let razorpay: Razorpay | null = null;
+
+async function getRazorpayInstance() {
+  if (!razorpay) {
+    if (
+      !process.env.RAZORPAY_KEY_ID ||
+      !process.env.RAZORPAY_KEY_SECRET
+    ) {
+      // Don't crash at build time; just return null
+      return null;
+    }
+
+    const { default: Razorpay } = await import("razorpay");
+
+    razorpay = new Razorpay({
+      key_id: process.env.RAZORPAY_KEY_ID,
+      key_secret: process.env.RAZORPAY_KEY_SECRET,
+    });
+  }
+
+  return razorpay;
+}
 
 export interface CreatePaymentLinkParams {
-  amount: number  // in INR
-  contactName: string
-  contactPhone: string
-  contactEmail?: string
-  description: string
-  invoiceNumber: string
-  gstRate?: number  // default 18
-  expiryMinutes?: number  // default 2880 = 48hrs
-  notifyWhatsapp?: boolean
+  amount: number; // in INR
+  contactName: string;
+  contactPhone: string;
+  contactEmail?: string;
+  description: string;
+  invoiceNumber: string;
+  gstRate?: number; // default 18
+  expiryMinutes?: number; // default 2880 = 48hrs
+  notifyWhatsapp?: boolean;
 }
 
 export interface PaymentLinkResult {
-  id: string
-  short_url: string
-  amount: number
-  gst_amount: number
-  total_amount: number
-  invoice_number: string
-  expires_at: number
+  id: string;
+  short_url: string;
+  amount: number;
+  gst_amount: number;
+  total_amount: number;
+  invoice_number: string;
+  expires_at: number;
 }
 
 // Create Razorpay Payment Link with GST
-export async function createUpiPaymentLink(params: CreatePaymentLinkParams): Promise<PaymentLinkResult> {
-  const gstRate = params.gstRate ?? 18
-  const baseAmount = params.amount
-  const gstAmount = Math.round(baseAmount * gstRate / 100)
-  const totalAmount = baseAmount + gstAmount
-  const expirySeconds = (params.expiryMinutes ?? 2880) * 60
-  const expiresAt = Math.floor(Date.now() / 1000) + expirySeconds
+export async function createUpiPaymentLink(
+  params: CreatePaymentLinkParams
+): Promise<PaymentLinkResult> {
+  const gstRate = params.gstRate ?? 18;
+  const baseAmount = params.amount;
+  const gstAmount = Math.round(baseAmount * gstRate / 100);
+  const totalAmount = baseAmount + gstAmount;
+  const expirySeconds = (params.expiryMinutes ?? 2880) * 60;
+  const expiresAt = Math.floor(Date.now() / 1000) + expirySeconds;
+
+  const razorpay = await getRazorpayInstance();
+
+  if (!razorpay) {
+    throw new Error("Razorpay not configured (missing keys)");
+  }
 
   const link = await razorpay.paymentLink.create({
-    amount: totalAmount * 100,  // Razorpay expects paise
-    currency: 'INR',
+    amount: totalAmount * 100, // Razorpay expects paise
+    currency: "INR",
     accept_partial: false,
-    description: `${params.description} | Invoice: ${params.invoiceNumber} | GST ${gstRate}%`,
+    description: `${params.description} | Invoice: ${
+      params.invoiceNumber
+    } | GST ${gstRate}%`,
     customer: {
       name: params.contactName,
       contact: params.contactPhone,
@@ -61,12 +90,12 @@ export async function createUpiPaymentLink(params: CreatePaymentLinkParams): Pro
       gst_rate: gstRate.toString(),
       gst_amount: gstAmount.toString(),
       base_amount: baseAmount.toString(),
-      platform: 'BongoFlow AI',
+      platform: "BongoFlow AI",
     },
     expire_by: expiresAt,
     callback_url: `${process.env.NEXT_PUBLIC_APP_URL}/api/upi/webhook`,
-    callback_method: 'get',
-  })
+    callback_method: "get",
+  });
 
   return {
     id: link.id,
@@ -76,56 +105,72 @@ export async function createUpiPaymentLink(params: CreatePaymentLinkParams): Pro
     total_amount: totalAmount,
     invoice_number: params.invoiceNumber,
     expires_at: expiresAt,
-  }
+  };
 }
 
 // Verify Razorpay payment webhook signature
 export function verifyPaymentSignature(params: {
-  razorpay_payment_id: string
-  razorpay_payment_link_id: string
-  razorpay_payment_link_reference_id: string
-  razorpay_payment_link_status: string
-  razorpay_signature: string
+  razorpay_payment_id: string;
+  razorpay_payment_link_id: string;
+  razorpay_payment_link_reference_id: string;
+  razorpay_payment_link_status: string;
+  razorpay_signature: string;
 }): boolean {
-  const crypto = require('crypto')
-  const body = `${params.razorpay_payment_link_id}|${params.razorpay_payment_link_reference_id}|${params.razorpay_payment_link_status}|${params.razorpay_payment_id}`
+  const crypto = require("crypto");
+  const body = `${params.razorpay_payment_link_id}|${params.razorpay_payment_link_reference_id}|${params.razorpay_payment_link_status}|${params.razorpay_payment_id}`;
   const expectedSignature = crypto
-    .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET!)
+    .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET!)
     .update(body)
-    .digest('hex')
-  return expectedSignature === params.razorpay_signature
+    .digest("hex");
+  return expectedSignature === params.razorpay_signature;
 }
 
 // Generate GST Invoice HTML
 export function generateInvoiceHTML(params: {
-  invoiceNumber: string
-  date: string
-  businessName: string
-  gstin?: string
-  businessAddress?: string
-  contactName: string
-  contactPhone: string
-  contactEmail?: string
-  items: Array<{ description: string; quantity: number; rate: number; gstRate: number }>
-  notes?: string
+  invoiceNumber: string;
+  date: string;
+  businessName: string;
+  gstin?: string;
+  businessAddress?: string;
+  contactName: string;
+  contactPhone: string;
+  contactEmail?: string;
+  items: Array<{
+    description: string;
+    quantity: number;
+    rate: number;
+    gstRate: number;
+  }>;
+  notes?: string;
 }): string {
-  const subtotal = params.items.reduce((sum, item) => sum + item.quantity * item.rate, 0)
-  const totalGst = params.items.reduce((sum, item) => sum + item.quantity * item.rate * item.gstRate / 100, 0)
-  const total = subtotal + totalGst
+  const subtotal = params.items.reduce(
+    (sum, item) => sum + item.quantity * item.rate,
+    0
+  );
+  const totalGst = params.items.reduce(
+    (sum, item) =>
+      sum + item.quantity * item.rate * item.gstRate / 100,
+    0
+  );
+  const total = subtotal + totalGst;
 
-  const itemRows = params.items.map(item => {
-    const amount = item.quantity * item.rate
-    const gst = amount * item.gstRate / 100
-    return `
+  const itemRows = params.items
+    .map((item) => {
+      const amount = item.quantity * item.rate;
+      const gst = amount * item.gstRate / 100;
+      return `
       <tr>
         <td>${item.description}</td>
         <td style="text-align:center">${item.quantity}</td>
-        <td style="text-align:right">₹${item.rate.toLocaleString('en-IN')}</td>
+        <td style="text-align:right">₹${item.rate.toLocaleString("en-IN")}</td>
         <td style="text-align:center">${item.gstRate}%</td>
-        <td style="text-align:right">₹${gst.toLocaleString('en-IN')}</td>
-        <td style="text-align:right">₹${(amount + gst).toLocaleString('en-IN')}</td>
-      </tr>`
-  }).join('')
+        <td style="text-align:right">₹${gst.toLocaleString("en-IN")}</td>
+        <td style="text-align:right">₹${(amount + gst).toLocaleString(
+          "en-IN"
+        )}</td>
+      </tr>`;
+    })
+    .join("");
 
   return `<!DOCTYPE html>
 <html>
@@ -154,8 +199,16 @@ export function generateInvoiceHTML(params: {
   <div>
     <div class="logo">🐯 BongoFlow AI</div>
     <div style="font-size:14px;color:#666;margin-top:4px;">${params.businessName}</div>
-    ${params.gstin ? `<div class="gst-badge">GSTIN: ${params.gstin}</div>` : ''}
-    ${params.businessAddress ? `<div style="font-size:13px;color:#666;margin-top:6px;">${params.businessAddress}</div>` : ''}
+    ${
+      params.gstin
+        ? `<div class="gst-badge">GSTIN: ${params.gstin}</div>`
+        : ""
+    }
+    ${
+      params.businessAddress
+        ? `<div style="font-size:13px;color:#666;margin-top:6px;">${params.businessAddress}</div>`
+        : ""
+    }
   </div>
   <div style="text-align:right">
     <div class="invoice-title">GST INVOICE</div>
@@ -169,7 +222,11 @@ export function generateInvoiceHTML(params: {
     <h3>Bill To</h3>
     <div style="font-size:15px;font-weight:600;">${params.contactName}</div>
     <div style="color:#666;">${params.contactPhone}</div>
-    ${params.contactEmail ? `<div style="color:#666;">${params.contactEmail}</div>` : ''}
+    ${
+      params.contactEmail
+        ? `<div style="color:#666;">${params.contactEmail}</div>`
+        : ""
+    }
   </div>
 </div>
 
@@ -188,17 +245,27 @@ export function generateInvoiceHTML(params: {
 </table>
 
 <div class="totals">
-  <div class="total-row"><span>Subtotal</span><span>₹${subtotal.toLocaleString('en-IN')}</span></div>
-  <div class="total-row"><span>GST</span><span>₹${totalGst.toLocaleString('en-IN')}</span></div>
-  <div class="total-row grand-total"><span>Total</span><span>₹${total.toLocaleString('en-IN')}</span></div>
+  <div class="total-row"><span>Subtotal</span><span>₹${subtotal.toLocaleString(
+    "en-IN"
+  )}</span></div>
+  <div class="total-row"><span>GST</span><span>₹${totalGst.toLocaleString(
+    "en-IN"
+  )}</span></div>
+  <div class="total-row grand-total"><span>Total</span><span>₹${total.toLocaleString(
+    "en-IN"
+  )}</span></div>
 </div>
 
-${params.notes ? `<div style="margin-top:20px;padding:12px;background:#f9f9f9;border-radius:8px;font-size:13px;color:#666;"><strong>Notes:</strong> ${params.notes}</div>` : ''}
+${
+  params.notes
+    ? `<div style="margin-top:20px;padding:12px;background:#f9f9f9;border-radius:8px;font-size:13px;color:#666;"><strong>Notes:</strong> ${params.notes}</div>`
+    : ""
+}
 
 <div class="footer">
   Generated by BongoFlow AI · Kolkata'r nijer AI CRM · bongoflow.ai<br>
   This is a computer-generated invoice and does not require a physical signature.
 </div>
 </body>
-</html>`
+</html>`;
 }
