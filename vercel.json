@@ -7,7 +7,7 @@
   "crons": [
     {
       "path": "/api/upi/followup",
-      "schedule": "0 * * * *"
+      "schedule": "0 0 * * *"
     }
   ],
   "headers": [
