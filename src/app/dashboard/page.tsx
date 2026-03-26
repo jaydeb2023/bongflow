@@ -5,6 +5,8 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 import { TrendingUp, Users, Flame, Thermometer, Snowflake, Phone, Clock, CreditCard, MessageSquare, IndianRupee } from 'lucide-react'
+import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
+
 
 const weeklyData = [
   { day: 'Mon', hot: 4, warm: 7, cold: 3 },
