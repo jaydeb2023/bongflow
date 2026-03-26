@@ -3,7 +3,7 @@ import { createServerSupabaseClient } from '@/lib/supabase'
 import { DashboardStats } from '@/types'
 
 export async function GET(req: NextRequest) {
-  const supabase = createServerSupabaseClient()
+  const supabase = await createServerSupabaseClient()
   const { searchParams } = new URL(req.url)
   const businessId = searchParams.get('business_id')
 
