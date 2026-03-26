@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createAdminClient } from "@/lib/supabase";
-import { createServerClient } from "@supabase/ssr";
+import { createAdminClient, createServerSupabaseClient } from "@/lib/supabase";
 import { createUpiPaymentLink } from "@/lib/razorpay";
 import { sendUpiLinkWhatsApp, sendWhatsAppMessage } from "@/lib/whatsapp";
-import { createServerClient } from "@supabase/ssr";
+
 // POST /api/upi/create — Create payment link + send via WhatsApp
 export async function POST(req: NextRequest) {
   try {
-    const supabase = createServerSupabaseClient();
+    const supabase = await createServerSupabaseClient(); // ✅ await it
     const body = await req.json();
 
     const {
