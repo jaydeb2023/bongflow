@@ -3,7 +3,7 @@ import { createAdminClient, createServerSupabaseClient } from '@/lib/supabase'
 import { sendWhatsAppMessage } from '@/lib/whatsapp'
 
 // GET /api/referrals — Get referral stats + share link
-export async function GET(req: NextRequest) {
+export async function GET(req: Request) {
   const supabase = await createServerSupabaseClient()
   const { searchParams } = new URL(req.url)
   const businessId = searchParams.get('business_id')
