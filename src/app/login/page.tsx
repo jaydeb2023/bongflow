@@ -1,17 +1,16 @@
 // 📁 src/app/login/page.tsx
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 export default function LoginPage() {
   const router = useRouter()
-
   const [mobile, setMobile] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
 
-  // ডামি চেক: লগইন করা user আছে কিনা
+  // ডামি চেক: যদি user থাকে তো আগেই /dashboard‑এ পাঠিয়ে দেব
   useEffect(() => {
     async function checkUser() {
       const res = await fetch('/api/auth/me')
@@ -27,9 +26,8 @@ export default function LoginPage() {
   function handleMobileSubmit(e: React.FormEvent) {
     e.preventDefault()
 
-    // SMS OTP session ধরে রাখার জন্য ডামি লগিক ধরা হয়েছে
-    // পরে Supabase দিয়ে প্রকৃত SMS OTP বা normal লগইন করবে
-    if (mobile.length !== 10) {
+    // ভারতীয় 10‑digit নম্বর চেক করি
+    if (!/^\d{10}$/.test(mobile)) {
       setError('মোবাইল নম্বর 10 সংখ্যা হতে হবে (ভারত)।')
       return
     }
@@ -38,6 +36,7 @@ export default function LoginPage() {
     setError('')
 
     // 💡 পরে: /api/otp/send বা /api/auth/me কল করবে
+    // এখন শুধু ডামি behaviour দেখাচ্ছি
     setTimeout(() => {
       router.push('/dashboard')
     }, 800)
@@ -56,7 +55,7 @@ export default function LoginPage() {
           borderRadius: 16,
         }}
       >
-        {/* তোমার লোগো */}
+        {/* লোগো */}
         <div className="text-center mb-6">
           <img
             src="/bongflowailogo.png"
@@ -76,7 +75,7 @@ export default function LoginPage() {
           className="text-xs text-center mb-6"
           style={{ color: 'var(--text-muted)' }}
         >
-          আমরা আপনাকে OTP পাঠাব, ১০ সেকেন্ডে লগইন হয়ে যাবে।
+          আমরা আপনাকে OTP পাঠাব, ১০ সেকেন্ডে লগইন হয়ে যাবে চেষ্টা করুন।
         </p>
 
         {error && (
@@ -93,7 +92,7 @@ export default function LoginPage() {
 
         <form onSubmit={handleMobileSubmit} className="space-y-4">
           <div>
-            <label
+            abel
               className="text-xs mb-1 block"
               style={{ color: 'var(--text-muted)' }}
             >
