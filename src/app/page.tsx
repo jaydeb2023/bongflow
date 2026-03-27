@@ -325,6 +325,7 @@ export default function LandingPage() {
             <Link href="#features" className="bf-nav-link">Features</Link>
             <Link href="#pricing" className="bf-nav-link">Pricing</Link>
             <Link href="#demo" className="bf-nav-link">Demo</Link>
+            <Link href="/login" className="bf-btn-pill desktop-only">Login →</Link>
             <Link href="/dashboard" className="bf-btn-pill desktop-only">শুরু করুন →</Link>
           </div>
           <button
