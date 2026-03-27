@@ -92,7 +92,7 @@ export default function LoginPage() {
 
         <form onSubmit={handleMobileSubmit} className="space-y-4">
           <div>
-            abel
+            <label
               className="text-xs mb-1 block"
               style={{ color: 'var(--text-muted)' }}
             >
