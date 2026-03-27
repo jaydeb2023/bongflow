@@ -1,7 +1,9 @@
-// src/app/dashboard/page.tsx
+// 📁 src/app/dashboard/page.tsx
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+
 import {
   TrendingUp, Users, Flame, Thermometer, Phone,
   Clock, CreditCard, MessageSquare, IndianRupee,
@@ -94,8 +96,38 @@ function StatCard({ label, value, sub, icon: Icon, color, prefix = '' }: {
 
 /* ── PAGE ── */
 export default function DashboardPage() {
+  const router = useRouter()
+  const [isLoaded, setIsLoaded] = useState(false)
+  const [user, setUser] = useState<any>(null)
   const [greeting, setGreeting] = useState('নমস্কার')
 
+  // 🔐 auth check
+  useEffect(() => {
+    async function checkUser() {
+      const res = await fetch('/api/auth/me')
+      const data = await res.json()
+
+      if (!res.ok || !data.user) {
+        router.push('/login')
+        return
+      }
+
+      setUser(data.user)
+      setIsLoaded(true)
+    }
+
+    checkUser()
+  }, [router])
+
+  if (!isLoaded) {
+    return (
+      <div style={{ padding: '60px 20px', textAlign: 'center', color: 'var(--text-muted)' }}>
+        লগিন চেক করা হচ্ছে...
+      </div>
+    )
+  }
+
+  // সময়ভিত্তিক greeting
   useEffect(() => {
     const h = new Date().getHours()
     if (h < 12)      setGreeting('সুপ্রভাত')
@@ -120,6 +152,42 @@ export default function DashboardPage() {
 
   return (
     <div style={{ padding: '20px 24px', maxWidth: 1400, margin: '0 auto' }}>
+
+      {/* ⬇ নাভবার (লগআউট বাটন সহ) */}
+      <div
+        style={{
+          background: 'var(--dark)',
+          borderBottom: '1px solid var(--border)',
+          padding: '12px 24px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          color: 'var(--text)',
+          marginBottom: 24,
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <img src="/bongflowailogo.png" alt="BongoFlow AI" style={{ height: 32, width: 'auto' }} />
+          <span style={{ fontWeight: 700 }}>Dashboard</span>
+        </div>
+        <button
+          type="button"
+          style={{
+            background: 'transparent',
+            border: '0.5px solid var(--border)',
+            color: 'var(--muted)',
+            padding: '6px 12px',
+            borderRadius: 8,
+            fontSize: 11,
+          }}
+          onClick={() => router.push('/login')}
+        >
+          Logout
+        </button>
+      </div>
+      {/* ⬆ নাভ শেষ */
+
+      }
 
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
@@ -224,41 +292,4 @@ export default function DashboardPage() {
                 className="card-inner"
                 style={{ padding: '10px 12px', cursor: 'pointer', transition: 'border-color .15s' }}
                 onMouseEnter={e => (e.currentTarget.style.borderColor = 'var(--border-hover)')}
-                onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--border)')}
-              >
-                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8, marginBottom: 6 }}>
-                  <div style={{ minWidth: 0, flex: 1 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2, flexWrap: 'wrap' }}>
-                      <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)' }}>{lead.name}</span>
-                      <LeadBadge level={lead.level} />
-                    </div>
-                    <div style={{ fontSize: 10, color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{lead.biz}</div>
-                    <div style={{ fontSize: 10, color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: 2 }}>{lead.msg}</div>
-                  </div>
-                  <div style={{ flexShrink: 0, textAlign: 'right' }}>
-                    <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>{lead.time}</div>
-                    {lead.value > 0 && (
-                      <div style={{ fontSize: 11, fontWeight: 700, color: '#00d084', marginTop: 2 }}>
-                        ₹{lead.value.toLocaleString('en-IN')}
-                      </div>
-                    )}
-                  </div>
-                </div>
-                {/* Score bar */}
-                <div style={{ height: 3, background: 'var(--bg-primary)', borderRadius: 99, overflow: 'hidden' }}>
-                  <div style={{
-                    height: '100%', borderRadius: 99,
-                    width: `${lead.score}%`,
-                    background: lead.level === 'hot' ? '#00d084' : lead.level === 'warm' ? '#f5a623' : '#4a90e2',
-                    transition: 'width .5s ease',
-                  }} />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-      </div>
-    </div>
-  )
-}
+                onMouseLeave={e => (e.currentTarget.style
